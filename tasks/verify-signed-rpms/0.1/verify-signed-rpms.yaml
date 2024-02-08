@@ -5,10 +5,6 @@ metadata:
   name: verify-signed-rpms
 spec:
   params:
-    - name: IMAGE
-      type: string
-      description: The image to use for this task
-      default: ""
     - name: INPUT
       type: string
       description: "AppStudio snapshot or a reference to a container image"
@@ -30,7 +26,7 @@ spec:
       emptyDir: {}
   steps:
     - name: verify-signed-rpms
-      image: "$(params.IMAGE)"
+      image: quay.io/redhat-user-workloads/rhtap-o11y-tenant/tools/tools:b95417fbab81a012881b79fee82f187074248b84
       volumeMounts:
         - name: workdir
           mountPath: "$(params.WORKDIR)"
