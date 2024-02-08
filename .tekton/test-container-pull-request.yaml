@@ -303,8 +303,6 @@ spec:
         name: generate-odcs-compose
         kind: Task
       params:
-        - name: IMAGE
-          value: quay.io/redhat-user-workloads/rhtap-o11y-tenant/tools/tools:3e4c9a30e734aa34f57a084633ccfbb73d466fbd
         - name: COMPOSE_INPUTS
           value: source/compose_inputs.yaml
         - name: COMPOSE_OUTPUTS
@@ -395,8 +393,6 @@ spec:
         name: verify-signed-rpms
         kind: Task
       params:
-      - name: IMAGE
-        value: quay.io/redhat-user-workloads/rhtap-o11y-tenant/tools/tools:3e4c9a30e734aa34f57a084633ccfbb73d466fbd
       - name: INPUT
         value: $(tasks.build-container.results.IMAGE_URL)
       - name: FAIL_UNSIGNED

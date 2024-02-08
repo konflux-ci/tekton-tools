@@ -19,18 +19,12 @@ metadata:
 spec:
   pipelineSpec:
     params:
-    - name: IMAGE
-      type: string
-      description: The image to use for this pipeline
-      default: quay.io/redhat-user-workloads/rhtap-o11y-tenant/tools/tools:3e4c9a30e734aa34f57a084633ccfbb73d466fbd
     - name: FAIL_UNSIGNED
       type: string
       default: false
     tasks:
       - name: verify-signed-rpms-error
         params:
-        - name: IMAGE
-          value: $(params.IMAGE)
         - name: INPUT
           value: |
             {
@@ -55,22 +49,16 @@ spec:
         runAfter:
           - verify-signed-rpms-error
         params:
-          - name: IMAGE
-            value: $(params.IMAGE)
           - name: TEST_OUTPUT
             value: $(tasks.verify-signed-rpms-error.results.TEST_OUTPUT)
         taskSpec:
           params:
-            - name: IMAGE
-              type: string
-              description: The image to use for this task
-              default: ""
             - name: TEST_OUTPUT
               type: string
               description: output of the task
           steps:
             - name: verify-output
-              image: "$(params.IMAGE)"
+              image: registry.access.redhat.com/ubi9/ubi-minimal:9.2-750.1697625013
               script: |
                 #!/bin/bash
                 set -ex
@@ -87,8 +75,6 @@ spec:
                 fi
       - name: verify-signed-rpms-success
         params:
-        - name: IMAGE
-          value: $(params.IMAGE)
         - name: INPUT
           value: |
             {
@@ -107,22 +93,16 @@ spec:
         runAfter:
           - verify-signed-rpms-success
         params:
-          - name: IMAGE
-            value: $(params.IMAGE)
           - name: TEST_OUTPUT
             value: $(tasks.verify-signed-rpms-success.results.TEST_OUTPUT)
         taskSpec:
           params:
-            - name: IMAGE
-              type: string
-              description: The image to use for this task
-              default: ""
             - name: TEST_OUTPUT
               type: string
               description: output of the task
           steps:
             - name: verify-output
-              image: "$(params.IMAGE)"
+              image: registry.access.redhat.com/ubi9/ubi-minimal:9.2-750.1697625013
               script: |
                 #!/bin/bash
                 set -ex
