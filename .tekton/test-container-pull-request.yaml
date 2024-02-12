@@ -295,10 +295,6 @@ spec:
       workspaces:
       - name: workdir
         workspace: workspace
-      - name: keytab-secret
-        workspace: keytab-secret
-      - name: krb-cache
-        workspace: krb-cache
       taskRef:
         name: generate-odcs-compose
         kind: Task
@@ -416,10 +412,4 @@ spec:
   - name: git-auth
     secret:
       secretName: '{{ git_auth_secret }}'
-  - name: keytab-secret
-    secret:
-      secretName: rhtap-compose
-  - name: krb-cache
-    secret:
-      secretName: krbcache
 status: {}
