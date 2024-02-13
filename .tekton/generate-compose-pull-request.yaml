@@ -18,12 +18,6 @@ metadata:
   namespace: gbenhaim-tenant
 spec:
   workspaces:
-    - name: keytab-secret
-      secret:
-        secretName: rhtap-compose
-    - name: krb-cache
-      secret:
-        secretName: krbcache
     - name: workdir
       volumeClaimTemplate:
         spec:
@@ -34,12 +28,8 @@ spec:
               storage: 1Mi
   pipelineSpec:
     workspaces:
-      - name: keytab-secret
-        description: for storing keytab secret
       - name: workdir
         description: for storing input yaml and output composes
-      - name: krb-cache
-        description: location of krb cache
     tasks:
       - name: prep-inputs
         workspaces:
@@ -68,9 +58,7 @@ spec:
       - name: generate-odcs-compose
         runAfter: [prep-inputs]
         workspaces:
-          - name: keytab-secret
           - name: workdir
-          - name: krb-cache
         taskRef:
           name: generate-odcs-compose
           kind: Task
