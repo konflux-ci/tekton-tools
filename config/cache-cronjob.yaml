@@ -43,7 +43,7 @@ spec:
                   readOnly: true
                   mountPath: /tmp/kt
               image: >-
-                quay.io/redhat-user-workloads/rhtap-o11y-tenant/tools/tools:1126d8b701fe1448fe77e98f1906fd685fdbe3d4
+                quay.io/redhat-user-workloads/rhtap-o11y-tenant/tools/tools:20de0e480e7dd1b734775f33b46170e25ec18197
           serviceAccount: krb-cache-refresher
           volumes:
             - name: rhtap-compose-volume
