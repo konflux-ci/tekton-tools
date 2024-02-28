@@ -1,0 +1,59 @@
+---
+apiVersion: tekton.dev/v1
+kind: Task
+metadata:
+  name: allocate-namespace
+spec:
+  params:
+    - name: KONFLUXNAMESPACE
+      type: string
+      description: The namespace used
+      default: "gbenhaim-tenant"
+    - name: SPACEREQUEST_NAME
+      type: string
+      description: The name for the newly created space request
+      default: "test-spacerequest"
+  results:
+    - name: secretRef
+      description:
+        SecretRef is the name of the secret with a SA token that has admin-like
+        (or whatever we set in the tier template) permissions in the namespace
+      type: string
+  steps:
+    - name: request-ephemeral-namespace
+      image: quay.io/redhat-user-workloads/rhtap-o11y-tenant/tools/tools:3e4c9a30e734aa34f57a084633ccfbb73d466fbd
+      env:
+        - name: KONFLUXNAMESPACE
+          value: "$(params.KONFLUXNAMESPACE)"
+        - name: SPACEREQUEST_NAME
+          value: "$(params.SPACEREQUEST_NAME)"
+        - name: PIPELINERUN_NAME
+          value: "$(context.pipelineRun.name)"
+        - name: PIPELINERUN_UID
+          value: "$(context.pipelineRun.uid)"
+      script: |
+        #!/bin/bash
+        set -ex
+        set -o pipefail
+
+        oc apply -f - <<EOF
+        apiVersion: toolchain.dev.openshift.com/v1alpha1
+        kind: SpaceRequest
+        metadata:
+          name: $SPACEREQUEST_NAME
+          namespace: $KONFLUXNAMESPACE
+          ownerReferences:
+          - apiVersion: tekton.dev/v1
+            kind: PipelineRun
+            name: $PIPELINERUN_NAME
+            uid: $PIPELINERUN_UID
+        spec:
+          tierName: appstudio-env
+        EOF
+
+        if oc wait spacerequests $SPACEREQUEST_NAME --for=condition=Ready --timeout=5m -n $KONFLUXNAMESPACE; then
+          secretRef=$(oc get spacerequests $SPACEREQUEST_NAME -o=jsonpath='{.status.namespaceAccess[0].secretRef}')
+          echo $secretRef > tee "$(results.secretRef.path)"
+        else
+          exit 1
+        fi

@@ -13,7 +13,8 @@ metadata:
       [
       tasks/buildah/0.2/buildah.yaml,
       tasks/generate-odcs-compose/0.1/generate-odcs-compose.yaml,
-      tasks/verify-signed-rpms/0.1/verify-signed-rpms.yaml
+      tasks/verify-signed-rpms/0.1/verify-signed-rpms.yaml,
+      tasks/allocate-namespace.yaml
       ]
   creationTimestamp: null
   labels:
@@ -393,6 +394,12 @@ spec:
         value: $(tasks.build-container.results.IMAGE_URL)
       - name: FAIL_UNSIGNED
         value: false
+    - name: allocate-namespace
+      runAfter:
+      - clone-repository
+      taskRef:
+        name: allocate-namespace
+        kind: Task
     workspaces:
     - name: workspace
     - name: git-auth
