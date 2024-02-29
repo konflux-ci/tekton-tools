@@ -114,6 +114,7 @@ spec:
             set -x
             rsync -a --delete $ARTIFACTS_PATH/generate-odcs-compose ./task
             rsync -a --delete $ARTIFACTS_PATH/verify-signed-rpms ./task
+            rsync -a --delete $ARTIFACTS_PATH/allocate-namespace ./task
     workspaces:
     - name: workspace
     - name: git-auth
