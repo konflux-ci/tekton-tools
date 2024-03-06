@@ -4,15 +4,6 @@ kind: Task
 metadata:
   name: allocate-namespace
 spec:
-  params:
-    - name: KONFLUXNAMESPACE
-      type: string
-      description: The namespace used
-      default: "gbenhaim-tenant"
-    - name: SPACEREQUEST_NAME
-      type: string
-      description: The name for the newly created space request
-      default: "test-spacerequest"
   results:
     - name: secretRef
       description:
@@ -21,12 +12,10 @@ spec:
       type: string
   steps:
     - name: request-ephemeral-namespace
-      image: quay.io/redhat-user-workloads/rhtap-o11y-tenant/tools/tools:3e4c9a30e734aa34f57a084633ccfbb73d466fbd
+      image: registry.redhat.io/openshift4/ose-cli:4.13@sha256:73df37794ffff7de1101016c23dc623e4990810390ebdabcbbfa065214352c7c
       env:
         - name: KONFLUXNAMESPACE
-          value: "$(params.KONFLUXNAMESPACE)"
-        - name: SPACEREQUEST_NAME
-          value: "$(params.SPACEREQUEST_NAME)"
+          value: "$(context.pipelineRun.namespace)"
         - name: PIPELINERUN_NAME
           value: "$(context.pipelineRun.name)"
         - name: PIPELINERUN_UID
@@ -36,11 +25,11 @@ spec:
         set -ex
         set -o pipefail
 
-        oc apply -f - <<EOF
+        cat <<EOF > space_request.yaml
         apiVersion: toolchain.dev.openshift.com/v1alpha1
         kind: SpaceRequest
         metadata:
-          name: $SPACEREQUEST_NAME
+          generateName: task-spacerequest-
           namespace: $KONFLUXNAMESPACE
           ownerReferences:
           - apiVersion: tekton.dev/v1
@@ -50,6 +39,8 @@ spec:
         spec:
           tierName: appstudio-env
         EOF
+
+        SPACEREQUEST_NAME=$(oc create -f space_request.yaml -o=jsonpath='{.metadata.name}')
 
         if oc wait spacerequests $SPACEREQUEST_NAME --for=condition=Ready --timeout=5m -n $KONFLUXNAMESPACE; then
           secretRef=$(oc get spacerequests $SPACEREQUEST_NAME -o=jsonpath='{.status.namespaceAccess[0].secretRef}')

@@ -14,7 +14,7 @@ metadata:
       tasks/buildah/0.2/buildah.yaml,
       tasks/generate-odcs-compose/0.1/generate-odcs-compose.yaml,
       tasks/verify-signed-rpms/0.1/verify-signed-rpms.yaml,
-      tasks/allocate-namespace.yaml
+      tasks/allocate-namespace/0.1/allocate-namespace.yaml
       ]
   creationTimestamp: null
   labels:
