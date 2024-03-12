@@ -14,7 +14,7 @@ metadata:
       tasks/buildah/0.2/buildah.yaml,
       tasks/generate-odcs-compose/0.1/generate-odcs-compose.yaml,
       tasks/verify-signed-rpms/0.1/verify-signed-rpms.yaml,
-      tasks/allocate-namespace/0.1/allocate-namespace.yaml
+      tasks/provision-env-with-ephemeral-namespace/0.1/provision-env-with-ephemeral-namespace.yaml
       ]
   creationTimestamp: null
   labels:
@@ -394,11 +394,11 @@ spec:
         value: $(tasks.build-container.results.IMAGE_URL)
       - name: FAIL_UNSIGNED
         value: false
-    - name: allocate-namespace
+    - name: provision-env-with-ephemeral-namespace
       runAfter:
       - clone-repository
       taskRef:
-        name: allocate-namespace
+        name: provision-env-with-ephemeral-namespace
         kind: Task
     workspaces:
     - name: workspace

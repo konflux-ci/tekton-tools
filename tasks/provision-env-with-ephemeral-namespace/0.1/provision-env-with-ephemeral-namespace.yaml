@@ -2,7 +2,7 @@
 apiVersion: tekton.dev/v1
 kind: Task
 metadata:
-  name: allocate-namespace
+  name: provision-env-with-ephemeral-namespace
 spec:
   results:
     - name: secretRef
