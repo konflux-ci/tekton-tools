@@ -1,4 +1,4 @@
-# allocate-namespace task
+# provision-env-with-ephemeral-namespace task
 
 ## Description:
 This task generates a spaceRequest which in turn creates a namespace in the cluster.
