@@ -367,6 +367,10 @@ spec:
       params:
       - name: BASE_IMAGES_DIGESTS
         value: $(tasks.build-container.results.BASE_IMAGES_DIGESTS)
+      - name: IMAGE_URL
+        value: $(tasks.build-container.results.IMAGE_URL)
+      - name: IMAGE_DIGEST
+        value: $(tasks.build-container.results.IMAGE_DIGEST)
       runAfter:
       - build-container
       taskRef:
@@ -374,7 +378,7 @@ spec:
         - name: name
           value: deprecated-image-check
         - name: bundle
-          value: quay.io/redhat-appstudio-tekton-catalog/task-deprecated-image-check:0.3@sha256:ae1fcb32b1aeac846e1a41019b2e735b9c25c27752496f17744d869860c80ff1
+          value: quay.io/redhat-appstudio-tekton-catalog/task-deprecated-image-check:0.4@sha256:2ca01e72abad1fbd415099796759a565730ee0cf5bc39450c2cbf35908e553cd
         - name: kind
           value: task
         resolver: bundles
