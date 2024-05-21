@@ -75,7 +75,7 @@ spec:
         - name: name
           value: git-clone
         - name: bundle
-          value: quay.io/redhat-appstudio-tekton-catalog/task-git-clone:0.1@sha256:30709df067659a407968154fd39e99763823d8ecfc6b5cd00a55b68818ec94ba
+          value: quay.io/redhat-appstudio-tekton-catalog/task-git-clone:0.1@sha256:729ed7f3b7a3da2658c80655039989a66da207b91036893409bd1305e69a655f
         - name: kind
           value: task
         resolver: bundles
