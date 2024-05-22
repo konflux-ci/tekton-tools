@@ -106,7 +106,7 @@ spec:
         - name: ARTIFACTS_PATH
           value: /workspace/artifacts/source/tasks
         - name: TARGET_GH_REPO
-          value: redhat-appstudio/build-definitions
+          value: konflux-ci/build-definitions
         - name: PR_URL
           value: $(params.pr-url)
         - name: SCRIPT
