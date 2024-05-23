@@ -23,6 +23,13 @@ spec:
         taskRef:
           name: provision-env-with-ephemeral-namespace
           kind: Task
+        params:
+        - name: KONFLUXNAMESPACE
+          value: "$(context.pipelineRun.namespace)"
+        - name: PIPELINERUN_NAME
+          value: "$(context.pipelineRun.name)"
+        - name: PIPELINERUN_UID
+          value: "$(context.pipelineRun.uid)"
       - name: verify-provisioning
         runAfter: [provision-env]
         taskSpec:
