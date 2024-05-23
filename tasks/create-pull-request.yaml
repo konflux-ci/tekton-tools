@@ -41,7 +41,8 @@ spec:
       default: "305606"
     - name: GITHUB_APP_INSTALLATION_ID
       description: Installation ID of Github app in the organization
-      default: "35269675"
+      # https://github.com/apps/rh-tap-build-team in https://github.com/konflux-ci
+      default: "51073377"
     - name: ARTIFACTS_PATH
       description: path to mount artifacts directory
       default: "."
