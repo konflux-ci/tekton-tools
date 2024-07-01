@@ -58,7 +58,7 @@ spec:
               description: output of the task
           steps:
             - name: verify-output
-              image: registry.access.redhat.com/ubi9/ubi-minimal:9.2-750.1697625013
+              image: registry.access.redhat.com/ubi9/ubi-minimal:9.4-1134
               script: |
                 #!/bin/bash
                 set -ex
@@ -102,7 +102,7 @@ spec:
               description: output of the task
           steps:
             - name: verify-output
-              image: registry.access.redhat.com/ubi9/ubi-minimal:9.2-750.1697625013
+              image: registry.access.redhat.com/ubi9/ubi-minimal:9.4-1134
               script: |
                 #!/bin/bash
                 set -ex
