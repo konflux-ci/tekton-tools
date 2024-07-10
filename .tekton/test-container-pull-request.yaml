@@ -11,7 +11,6 @@ metadata:
       == "main"
     pipelinesascode.tekton.dev/task: >-
       [
-      tasks/buildah/0.2/buildah.yaml,
       tasks/generate-odcs-compose/0.1/generate-odcs-compose.yaml,
       tasks/verify-signed-rpms/0.1/verify-signed-rpms.yaml,
       tasks/provision-env-with-ephemeral-namespace/0.1/provision-env-with-ephemeral-namespace.yaml
@@ -324,8 +323,14 @@ spec:
       - prefetch-dependencies
       - generate-odcs-compose
       taskRef:
-        name: buildah
-        kind: Task
+        params:
+        - name: name
+          value: buildah
+        - name: bundle
+          value: quay.io/redhat-appstudio-tekton-catalog/task-buildah:0.1@sha256:b2d7986b918a77b328864bcdd25526ef59e781f098aa2f35b1db806fd893ed41
+        - name: kind
+          value: task
+        resolver: bundles
       when:
       - input: $(tasks.init.results.build)
         operator: in
