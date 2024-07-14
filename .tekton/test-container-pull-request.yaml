@@ -11,7 +11,7 @@ metadata:
       == "main"
     pipelinesascode.tekton.dev/task: >-
       [
-      tasks/generate-odcs-compose/0.1/generate-odcs-compose.yaml,
+      tasks/generate-odcs-compose/0.2/generate-odcs-compose.yaml,
       tasks/verify-signed-rpms/0.1/verify-signed-rpms.yaml,
       tasks/provision-env-with-ephemeral-namespace/0.1/provision-env-with-ephemeral-namespace.yaml
       ]
@@ -298,11 +298,6 @@ spec:
       taskRef:
         name: generate-odcs-compose
         kind: Task
-      params:
-        - name: COMPOSE_INPUTS
-          value: source/compose_inputs.yaml
-        - name: COMPOSE_OUTPUTS
-          value: fetched.repos.d
     - name: build-container
       params:
       - name: IMAGE
