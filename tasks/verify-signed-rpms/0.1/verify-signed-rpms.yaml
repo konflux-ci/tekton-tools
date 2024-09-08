@@ -26,7 +26,7 @@ spec:
       emptyDir: {}
   steps:
     - name: verify-signed-rpms
-      image: quay.io/redhat-appstudio/tools@sha256:36bf1fc9121b9ae23d793bd9f1617863954143aa59b4c4b8ddab9edec5866e36
+      image: quay.io/redhat-appstudio/tools@sha256:a3ad504174214b10f256094bcec95e60508ac1835e51f5128fd27b3afd58687a
       volumeMounts:
         - name: workdir
           mountPath: "$(params.WORKDIR)"
