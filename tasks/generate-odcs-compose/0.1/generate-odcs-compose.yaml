@@ -21,7 +21,7 @@ spec:
       description: Directory to write the result .repo files.
   steps:
     - name: generate-odcs-compose
-      image: quay.io/redhat-appstudio/tools@sha256:a3ad504174214b10f256094bcec95e60508ac1835e51f5128fd27b3afd58687a
+      image: quay.io/redhat-appstudio/tools@sha256:fc9aa003e5d7b33fc6a46a307d4ee8fbf59e8e2ea92c7e0841fcbc00f9df5c12
       env:
         - name: CLIENT_ID
           valueFrom:
