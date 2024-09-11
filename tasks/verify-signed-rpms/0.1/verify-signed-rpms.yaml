@@ -26,7 +26,7 @@ spec:
       emptyDir: {}
   steps:
     - name: verify-signed-rpms
-      image: quay.io/redhat-appstudio/tools@sha256:659df1a02f31c5c41b4034edfc68c2ab74adc6f246e91fb830cae72e1465dce5
+      image: quay.io/redhat-appstudio/tools@sha256:1171e9bfd43e1c75b32ec57cd68e8b56a12a9b7f1ab184de0855fe072449934c
       volumeMounts:
         - name: workdir
           mountPath: "$(params.WORKDIR)"
@@ -46,7 +46,6 @@ spec:
           --input "${INPUT}" \
           --fail-unsigned "${FAIL_UNSIGNED}" \
           --workdir "${WORKDIR}" \
-          --status-path "${WORKDIR}"/status
     - name: output-results
       image: quay.io/redhat-appstudio/konflux-test:v1.4.6@sha256:5f298d8d990dfa82023e50029b71b08e19c3c9cedb181dfc4bc86c9ecad8700c
       volumeMounts:

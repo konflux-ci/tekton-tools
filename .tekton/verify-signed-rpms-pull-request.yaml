@@ -26,20 +26,7 @@ spec:
       - name: verify-signed-rpms-error
         params:
         - name: INPUT
-          value: |
-            {
-              "components": [
-                  {
-                      "containerImage": "quay.io/o11y_tests/unsigned-rpms:latest"
-                  },
-                  {
-                      "containerImage": "quay.io/o11y_tests/signed-rpms:latest"
-                  },
-                  {
-                      "containerImage": "quay.io/o11y_tests/error:latest"
-                  }
-              ]
-            }
+          value: "quay.io/o11y_tests/unsigned-rpms:latest"
         - name: FAIL_UNSIGNED
           value: $(params.FAIL_UNSIGNED)
         taskRef:
@@ -70,20 +57,13 @@ spec:
                    [[ "$output" == *"ERROR"* ]]; then
                   echo "Output matches!"
                 else
-                  echo "Output does not match"
+                  echo "Output does not match!"
                   exit 1
                 fi
       - name: verify-signed-rpms-success
         params:
         - name: INPUT
-          value: |
-            {
-              "components": [
-                  {
-                      "containerImage": "quay.io/o11y_tests/signed-rpms:latest"
-                  }
-              ]
-            }
+          value: "quay.io/o11y_tests/signed-rpms:latest"
         - name: FAIL_UNSIGNED
           value: $(params.FAIL_UNSIGNED)
         taskRef:
@@ -114,6 +94,6 @@ spec:
                    [[ "$output" == *"SUCCESS"* ]]; then
                   echo "Output matches!"
                 else
-                  echo "Output does not match"
+                  echo "Output does not match!"
                   exit 1
                 fi
