@@ -1,7 +1,7 @@
-# verify-signed-rpms.yaml task
+# rpms-signature-scan.yaml task
 
 ## Description:
-This tasks checks whether the images it is provided with contain any unsigned RPMs.
+This tasks scans RPMs in an image and provide information about RPMs signatures.
 
 It can be used in two modes. Depending on the value of parameter `FAIL_UNSIGNED`, it
 will either fail any run that find unsigned RPMs, or only report its finding without

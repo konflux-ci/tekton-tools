@@ -12,7 +12,7 @@ metadata:
     pipelinesascode.tekton.dev/task: >-
       [
       tasks/generate-odcs-compose/0.2/generate-odcs-compose.yaml,
-      tasks/verify-signed-rpms/0.1/verify-signed-rpms.yaml,
+      tasks/rpms-signature-scan/0.1/rpms-signature-scan.yaml,
       tasks/provision-env-with-ephemeral-namespace/0.1/provision-env-with-ephemeral-namespace.yaml
       ]
   creationTimestamp: null
@@ -387,11 +387,11 @@ spec:
         operator: in
         values:
         - "false"
-    - name: verify-signed-rpms
+    - name: rpms-signature-scan
       runAfter:
       - build-container
       taskRef:
-        name: verify-signed-rpms
+        name: rpms-signature-scan
         kind: Task
       params:
       - name: INPUT
