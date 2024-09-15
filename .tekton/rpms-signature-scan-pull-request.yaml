@@ -9,12 +9,12 @@ metadata:
     pipelinesascode.tekton.dev/max-keep-runs: "3"
     pipelinesascode.tekton.dev/on-event: '[pull_request]'
     pipelinesascode.tekton.dev/on-target-branch: '[main]'
-    pipelinesascode.tekton.dev/task: tasks/verify-signed-rpms/0.1/verify-signed-rpms.yaml
+    pipelinesascode.tekton.dev/task: tasks/rpms-signature-scan/0.1/rpms-signature-scan.yaml
   labels:
     appstudio.openshift.io/application: tekton-tools
     appstudio.openshift.io/component: tekton-tools
     pipelines.appstudio.openshift.io/type: build
-  name: verify-signed-rpms-pull-request
+  name: rpms-signature-scan-pull-request
   namespace: gbenhaim-tenant
 spec:
   pipelineSpec:
@@ -23,23 +23,23 @@ spec:
       type: string
       default: false
     tasks:
-      - name: verify-signed-rpms-signed
+      - name: rpms-signature-scan-signed
         params:
         - name: INPUT
           value: "quay.io/o11y_tests/signed-rpms:latest"
         - name: FAIL_UNSIGNED
           value: $(params.FAIL_UNSIGNED)
         taskRef:
-          name: verify-signed-rpms
+          name: rpms-signature-scan
           kind: Task
       - name: verify-output-signed
         runAfter:
-          - verify-signed-rpms-signed
+          - rpms-signature-scan-signed
         params:
           - name: TEST_OUTPUT
-            value: $(tasks.verify-signed-rpms-signed.results.TEST_OUTPUT)
+            value: $(tasks.rpms-signature-scan-signed.results.TEST_OUTPUT)
           - name: RPMS_DATA
-            value: $(tasks.verify-signed-rpms-signed.results.RPMS_DATA)
+            value: $(tasks.rpms-signature-scan-signed.results.RPMS_DATA)
         taskSpec:
           params:
             - name: TEST_OUTPUT
@@ -75,23 +75,23 @@ spec:
                 fi
                 exit $exit
 
-      - name: verify-signed-rpms-unsigned
+      - name: rpms-signature-scan-unsigned
         params:
         - name: INPUT
           value: "quay.io/o11y_tests/unsigned-rpms:latest"
         - name: FAIL_UNSIGNED
           value: $(params.FAIL_UNSIGNED)
         taskRef:
-          name: verify-signed-rpms
+          name: rpms-signature-scan
           kind: Task
       - name: verify-output-unsigned
         runAfter:
-          - verify-signed-rpms-unsigned
+          - rpms-signature-scan-unsigned
         params:
           - name: TEST_OUTPUT
-            value: $(tasks.verify-signed-rpms-unsigned.results.TEST_OUTPUT)
+            value: $(tasks.rpms-signature-scan-unsigned.results.TEST_OUTPUT)
           - name: RPMS_DATA
-            value: $(tasks.verify-signed-rpms-unsigned.results.RPMS_DATA)
+            value: $(tasks.rpms-signature-scan-unsigned.results.RPMS_DATA)
         taskSpec:
           params:
             - name: TEST_OUTPUT
