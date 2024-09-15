@@ -61,8 +61,8 @@ spec:
         set -ex
 
         source /utils.sh
-        status=`cat "${WORKDIR}"/status`
-        rpms_data=`cat "${WORKDIR}"/results`
+        status=$(cat "${WORKDIR}"/status)
+        rpms_data=$(cat "${WORKDIR}"/results)
         if [ "$status" == "ERROR" ]; then
           note="Task $(context.task.name) completed: Not all RPMs were confirmed to be signed. Refer to Tekton task output for details"
         else
@@ -70,5 +70,5 @@ spec:
         fi
 
         TEST_OUTPUT=$(make_result_json -r "$status" -t "$note")
-        echo "${TEST_OUTPUT}" | tee $(results.TEST_OUTPUT.path)
-        echo "${rpms_data}" | tee $(results.RPMS_DATA.path)
+        echo "${TEST_OUTPUT}" | tee "$(results.TEST_OUTPUT.path)"
+        echo "${rpms_data}" | tee "$(results.RPMS_DATA.path)"
