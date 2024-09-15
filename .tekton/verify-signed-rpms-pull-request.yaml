@@ -23,44 +23,7 @@ spec:
       type: string
       default: false
     tasks:
-      - name: verify-signed-rpms-error
-        params:
-        - name: INPUT
-          value: "quay.io/o11y_tests/unsigned-rpms:latest"
-        - name: FAIL_UNSIGNED
-          value: $(params.FAIL_UNSIGNED)
-        taskRef:
-          name: verify-signed-rpms
-          kind: Task
-      - name: verify-output-error
-        runAfter:
-          - verify-signed-rpms-error
-        params:
-          - name: TEST_OUTPUT
-            value: $(tasks.verify-signed-rpms-error.results.TEST_OUTPUT)
-        taskSpec:
-          params:
-            - name: TEST_OUTPUT
-              type: string
-              description: output of the task
-          steps:
-            - name: verify-output
-              image: registry.access.redhat.com/ubi9/ubi-minimal:9.4-1134
-              script: |
-                #!/bin/bash
-                set -ex
-
-                output=$(params.TEST_OUTPUT)
-                echo "Output: $output"
-
-                if [[ "$output" == *"completed: Not all RPMs were confirmed to be signed. Refer to Tekton task output for details"* ]] &&
-                   [[ "$output" == *"ERROR"* ]]; then
-                  echo "Output matches!"
-                else
-                  echo "Output does not match!"
-                  exit 1
-                fi
-      - name: verify-signed-rpms-success
+      - name: verify-signed-rpms-signed
         params:
         - name: INPUT
           value: "quay.io/o11y_tests/signed-rpms:latest"
@@ -69,31 +32,97 @@ spec:
         taskRef:
           name: verify-signed-rpms
           kind: Task
-      - name: verify-output-success
+      - name: verify-output-signed
         runAfter:
-          - verify-signed-rpms-success
+          - verify-signed-rpms-signed
         params:
           - name: TEST_OUTPUT
-            value: $(tasks.verify-signed-rpms-success.results.TEST_OUTPUT)
+            value: $(tasks.verify-signed-rpms-signed.results.TEST_OUTPUT)
+          - name: RPMS_DATA
+            value: $(tasks.verify-signed-rpms-signed.results.RPMS_DATA)
         taskSpec:
           params:
             - name: TEST_OUTPUT
               type: string
               description: output of the task
+            - name: RPMS_DATA
+              type: string
+              description: Information about signed and unsigned RPMs
           steps:
             - name: verify-output
               image: registry.access.redhat.com/ubi9/ubi-minimal:9.4-1134
               script: |
                 #!/bin/bash
                 set -ex
+                exit=0
 
                 output=$(params.TEST_OUTPUT)
-                echo "Output: $output"
-
                 if [[ "$output" == *"completed: No unsigned RPMs"* ]] &&
                    [[ "$output" == *"SUCCESS"* ]]; then
                   echo "Output matches!"
                 else
                   echo "Output does not match!"
-                  exit 1
+                  exit=1
                 fi
+
+                results="$(params.RPMS_DATA)"
+                if [[ "$results" == *"199e2f91fd431d51: 95"* ]] &&
+                   [[ "$results" == *"unsigned: 0"* ]]; then
+                  echo "results matches!"
+                else
+                  echo "results does not match!"
+                  exit=1
+                fi
+                exit $exit
+
+      - name: verify-signed-rpms-unsigned
+        params:
+        - name: INPUT
+          value: "quay.io/o11y_tests/unsigned-rpms:latest"
+        - name: FAIL_UNSIGNED
+          value: $(params.FAIL_UNSIGNED)
+        taskRef:
+          name: verify-signed-rpms
+          kind: Task
+      - name: verify-output-unsigned
+        runAfter:
+          - verify-signed-rpms-unsigned
+        params:
+          - name: TEST_OUTPUT
+            value: $(tasks.verify-signed-rpms-unsigned.results.TEST_OUTPUT)
+          - name: RPMS_DATA
+            value: $(tasks.verify-signed-rpms-unsigned.results.RPMS_DATA)
+        taskSpec:
+          params:
+            - name: TEST_OUTPUT
+              type: string
+              description: output of the task
+            - name: RPMS_DATA
+              type: string
+              description: Information about signed and unsigned RPMs
+          steps:
+            - name: verify-output
+              image: registry.access.redhat.com/ubi9/ubi-minimal:9.4-1134
+              script: |
+                #!/bin/bash
+                set -ex
+                exit=0
+
+                output=$(params.TEST_OUTPUT)
+                if [[ "$output" == *"completed: Not all RPMs were confirmed to be signed. Refer to Tekton task output for details"* ]] &&
+                   [[ "$output" == *"ERROR"* ]]; then
+                  echo "Output matches!"
+                else
+                  echo "Output does not match!"
+                  exit=1
+                fi
+
+                results="$(params.RPMS_DATA)"
+                if [[ "$results" == *"199e2f91fd431d51: 163"* ]] &&
+                   [[ "$results" == *"unsigned: 68"* ]]; then
+                  echo "results matches!"
+                else
+                  echo "results does not match!"
+                  exit=1
+                fi
+                exit $exit

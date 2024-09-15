@@ -21,12 +21,14 @@ spec:
   results:
     - name: TEST_OUTPUT
       description: Tekton task test output.
+    - name: RPMS_DATA
+      description: Information about signed and unsigned RPMs
   volumes:
     - name: workdir
       emptyDir: {}
   steps:
     - name: verify-signed-rpms
-      image: quay.io/redhat-appstudio/tools@sha256:1171e9bfd43e1c75b32ec57cd68e8b56a12a9b7f1ab184de0855fe072449934c
+      image: quay.io/redhat-appstudio/tools@sha256:3faf8cbeb11ef2e8448c3f3a3d84dc31ba6dcd0ab663b56dfbf296ef757889d3
       volumeMounts:
         - name: workdir
           mountPath: "$(params.WORKDIR)"
@@ -60,6 +62,7 @@ spec:
 
         source /utils.sh
         status=`cat "${WORKDIR}"/status`
+        rpms_data=`cat "${WORKDIR}"/results`
         if [ "$status" == "ERROR" ]; then
           note="Task $(context.task.name) completed: Not all RPMs were confirmed to be signed. Refer to Tekton task output for details"
         else
@@ -68,3 +71,4 @@ spec:
 
         TEST_OUTPUT=$(make_result_json -r "$status" -t "$note")
         echo "${TEST_OUTPUT}" | tee $(results.TEST_OUTPUT.path)
+        echo "${rpms_data}" | tee $(results.RPMS_DATA.path)
