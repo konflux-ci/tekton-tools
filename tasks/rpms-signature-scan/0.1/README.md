@@ -9,13 +9,13 @@ failing (the latter is useful when running inside a build pipeline which tests t
 
 ## Params:
 
-| Name            | Description                                                       | Defaults  |
-|-----------------|-------------------------------------------------------------------|-----------|
-| IMAGE           | Image used for running the tasks's script                         |           |
-| INPUT           | A reference to a container image                                  |           |
-| FAIL_UNSIGNED   | [true \| false] If true fail if unsigned RPMs were found          | false     |
-| WORKDIR         | Directory for storing temporary files                             |           |
-
+| Name                     | Description                                                            | Defaults      | Required |
+|--------------------------|------------------------------------------------------------------------|---------------|----------|
+| INPUT                    | A reference to a container image                                       |               | true     |
+| FAIL_UNSIGNED            | [true \| false] If true fail if unsigned RPMs were found               | false         | false    |
+| WORKDIR                  | Directory for storing temporary files                                  | /tmp          | false    |
+| CA_TRUST_CONFIG_MAP_NAME | The name of the ConfigMap to read CA bundle data from.                 | trusted-ca    | false    |
+| CA_TRUST_CONFIG_MAP_KEY  | The name of the key in the ConfigMap that contains the CA bundle data. | ca-bundle.crt | false    |
 
 ## Results:
 
