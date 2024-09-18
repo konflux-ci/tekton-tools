@@ -7,7 +7,7 @@ spec:
   params:
     - name: INPUT
       type: string
-      description: "AppStudio snapshot or a reference to a container image"
+      description: "AppStudio container image"
     - name: FAIL_UNSIGNED
       type: string
       description: "[true | false] If true fail if unsigned RPMs were found"
@@ -18,6 +18,14 @@ spec:
       description: |
         Directory that will be used for storing temporary
         files produced by this task.
+    - name: CA_TRUST_CONFIG_MAP_NAME
+      type: string
+      description: The name of the ConfigMap to read CA bundle data from.
+      default: trusted-ca
+    - name: CA_TRUST_CONFIG_MAP_KEY
+      type: string
+      description: The name of the key in the ConfigMap that contains the CA bundle data.
+      default: ca-bundle.crt
   results:
     - name: TEST_OUTPUT
       description: Tekton task test output.
@@ -26,12 +34,23 @@ spec:
   volumes:
     - name: workdir
       emptyDir: {}
+    - name: trusted-ca
+      configMap:
+        name: $(params.CA_TRUST_CONFIG_MAP_NAME)
+        items:
+          - key: $(params.CA_TRUST_CONFIG_MAP_KEY)
+            path: ca-bundle.crt
+        optional: true
   steps:
     - name: rpms-signature-scan
       image: quay.io/redhat-appstudio/tools@sha256:86a3f82eb1fee6b22d1720ec080657e47b01e4038ee9d4d8ecbe21da1b8ac159
       volumeMounts:
         - name: workdir
           mountPath: "$(params.WORKDIR)"
+        - name: trusted-ca
+          mountPath: /etc/pki/tls/certs/ca-custom-bundle.crt
+          subPath: ca-bundle.crt
+          readOnly: true
       env:
         - name: INPUT
           value: "$(params.INPUT)"
