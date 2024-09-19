@@ -25,9 +25,9 @@ spec:
     tasks:
       - name: rpms-signature-scan-signed
         params:
-        - name: INPUT
+        - name: image-url
           value: "quay.io/o11y_tests/signed-rpms:latest"
-        - name: FAIL_UNSIGNED
+        - name: fail-unsigned
           value: $(params.FAIL_UNSIGNED)
         taskRef:
           name: rpms-signature-scan
@@ -77,9 +77,9 @@ spec:
 
       - name: rpms-signature-scan-unsigned
         params:
-        - name: INPUT
+        - name: image-url
           value: "quay.io/o11y_tests/unsigned-rpms:latest"
-        - name: FAIL_UNSIGNED
+        - name: fail-unsigned
           value: $(params.FAIL_UNSIGNED)
         taskRef:
           name: rpms-signature-scan
