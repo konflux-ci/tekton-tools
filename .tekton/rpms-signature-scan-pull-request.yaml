@@ -26,7 +26,9 @@ spec:
       - name: rpms-signature-scan-signed
         params:
         - name: image-url
-          value: "quay.io/o11y_tests/signed-rpms:latest"
+          value: "quay.io/vanguard_tests/signed-rpms:latest"
+        - name: image-digest
+          value: "sha256:3ec7a3cd38dbafafa766b22bfc3c433aaafdfed29d41ef2e01e372260b304b9d"
         - name: fail-unsigned
           value: $(params.FAIL_UNSIGNED)
         taskRef:
@@ -40,6 +42,8 @@ spec:
             value: $(tasks.rpms-signature-scan-signed.results.TEST_OUTPUT)
           - name: RPMS_DATA
             value: $(tasks.rpms-signature-scan-signed.results.RPMS_DATA)
+          - name: IMAGES_PROCESSED
+            value: $(tasks.rpms-signature-scan-signed.results.IMAGES_PROCESSED)
         taskSpec:
           params:
             - name: TEST_OUTPUT
@@ -48,6 +52,9 @@ spec:
             - name: RPMS_DATA
               type: string
               description: Information about signed and unsigned RPMs
+            - name: IMAGES_PROCESSED
+              type: string
+              description: Information about images processed
           steps:
             - name: verify-output
               image: registry.access.redhat.com/ubi9/ubi-minimal:9.4-1134
@@ -73,12 +80,23 @@ spec:
                   echo "results does not match!"
                   exit=1
                 fi
+
+                images_processed="$(params.IMAGES_PROCESSED)"
+                if [[ "$images_processed" == *"digests: [sha256:3ec7a3cd38dbafafa766b22bfc3c433aaafdfed29d41ef2e01e372260b304b9d]"* ]]; then
+                  echo "images_processed matches!"
+                else
+                  echo "images_processed does not match!"
+                  exit=1
+                fi
+
                 exit $exit
 
       - name: rpms-signature-scan-unsigned
         params:
         - name: image-url
-          value: "quay.io/o11y_tests/unsigned-rpms:latest"
+          value: "quay.io/vanguard_tests/unsigned-rpms:latest"
+        - name: image-digest
+          value: "sha256:076ed8309d59999feab05c43b81bc5134dde3fc974ae127bc6cedf5d95751c2e"
         - name: fail-unsigned
           value: $(params.FAIL_UNSIGNED)
         taskRef:
@@ -92,6 +110,8 @@ spec:
             value: $(tasks.rpms-signature-scan-unsigned.results.TEST_OUTPUT)
           - name: RPMS_DATA
             value: $(tasks.rpms-signature-scan-unsigned.results.RPMS_DATA)
+          - name: IMAGES_PROCESSED
+            value: $(tasks.rpms-signature-scan-unsigned.results.IMAGES_PROCESSED)
         taskSpec:
           params:
             - name: TEST_OUTPUT
@@ -100,6 +120,9 @@ spec:
             - name: RPMS_DATA
               type: string
               description: Information about signed and unsigned RPMs
+            - name: IMAGES_PROCESSED
+              type: string
+              description: Information about images processed
           steps:
             - name: verify-output
               image: registry.access.redhat.com/ubi9/ubi-minimal:9.4-1134
@@ -125,4 +148,82 @@ spec:
                   echo "results does not match!"
                   exit=1
                 fi
+
+                images_processed="$(params.IMAGES_PROCESSED)"
+                if [[ "$images_processed" == *"digests: [sha256:076ed8309d59999feab05c43b81bc5134dde3fc974ae127bc6cedf5d95751c2e]"* ]]; then
+                  echo "images_processed matches!"
+                else
+                  echo "images_processed does not match!"
+                  exit=1
+                fi
+
+                exit $exit
+
+      - name: rpms-signature-scan-image-index
+        params:
+        - name: image-url
+          value: "quay.io/vanguard_tests/image_index:latest"
+        - name: image-digest
+          value: "sha256:da4f388bb1f5ed8673d26f42a3175dadcd41c63e5eec44ad67023a44f643482f"
+        - name: fail-unsigned
+          value: $(params.FAIL_UNSIGNED)
+        taskRef:
+          name: rpms-signature-scan
+          kind: Task
+      - name: verify-output-image-index
+        runAfter:
+          - rpms-signature-scan-image-index
+        params:
+          - name: TEST_OUTPUT
+            value: $(tasks.rpms-signature-scan-image-index.results.TEST_OUTPUT)
+          - name: RPMS_DATA
+            value: $(tasks.rpms-signature-scan-image-index.results.RPMS_DATA)
+          - name: IMAGES_PROCESSED
+            value: $(tasks.rpms-signature-scan-image-index.results.IMAGES_PROCESSED)
+        taskSpec:
+          params:
+            - name: TEST_OUTPUT
+              type: string
+              description: output of the task
+            - name: RPMS_DATA
+              type: string
+              description: Information about signed and unsigned RPMs
+            - name: IMAGES_PROCESSED
+              type: string
+              description: Information about images processed
+          steps:
+            - name: verify-output
+              image: registry.access.redhat.com/ubi9/ubi-minimal:9.4-1134
+              script: |
+                #!/bin/bash
+                set -ex
+                exit=0
+
+                output=$(params.TEST_OUTPUT)
+                if [[ "$output" == *"completed: No unsigned RPMs"* ]] &&
+                   [[ "$output" == *"SUCCESS"* ]]; then
+                  echo "Output matches!"
+                else
+                  echo "Output does not match!"
+                  exit=1
+                fi
+
+                results="$(params.RPMS_DATA)"
+                if [[ "$results" == *"199e2f91fd431d51: 95"* ]] &&
+                   [[ "$results" == *"unsigned: 0"* ]]; then
+                  echo "results matches!"
+                else
+                  echo "results does not match!"
+                  exit=1
+                fi
+
+                images_processed="$(params.IMAGES_PROCESSED)"
+                if [[ "$images_processed" == *"sha256:da4f388bb1f5ed8673d26f42a3175dadcd41c63e5eec44ad67023a44f643482f"* ]] &&
+                   [[ "$images_processed" == *"sha256:3ec7a3cd38dbafafa766b22bfc3c433aaafdfed29d41ef2e01e372260b304b9d"* ]]; then
+                  echo "images_processed matches!"
+                else
+                  echo "images_processed does not match!"
+                  exit=1
+                fi
+
                 exit $exit
