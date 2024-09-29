@@ -13,7 +13,7 @@ spec:
       description: Image digest to scan
     - name: fail-unsigned
       type: string
-      description: "[true | false] If true fail if unsigned RPMs were found"
+      description: "[true \\ false] If true fail if unsigned RPMs were found"
       default: "false"
     - name: workdir
       type: string
