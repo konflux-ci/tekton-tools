@@ -9,7 +9,7 @@ metadata:
     pipelinesascode.tekton.dev/max-keep-runs: "3"
     pipelinesascode.tekton.dev/on-event: '[pull_request]'
     pipelinesascode.tekton.dev/on-target-branch: '[main]'
-    pipelinesascode.tekton.dev/task: tasks/rpms-signature-scan/0.1/rpms-signature-scan.yaml
+    pipelinesascode.tekton.dev/task: tasks/rpms-signature-scan/0.2/rpms-signature-scan.yaml
   labels:
     appstudio.openshift.io/application: tekton-tools
     appstudio.openshift.io/component: tekton-tools
@@ -18,10 +18,6 @@ metadata:
   namespace: gbenhaim-tenant
 spec:
   pipelineSpec:
-    params:
-    - name: FAIL_UNSIGNED
-      type: string
-      default: false
     tasks:
       - name: rpms-signature-scan-signed
         params:
@@ -29,8 +25,6 @@ spec:
           value: "quay.io/vanguard_tests/signed-rpms:latest"
         - name: image-digest
           value: "sha256:3ec7a3cd38dbafafa766b22bfc3c433aaafdfed29d41ef2e01e372260b304b9d"
-        - name: fail-unsigned
-          value: $(params.FAIL_UNSIGNED)
         taskRef:
           name: rpms-signature-scan
           kind: Task
@@ -64,7 +58,7 @@ spec:
                 exit=0
 
                 output=$(params.TEST_OUTPUT)
-                if [[ "$output" == *"completed: No unsigned RPMs"* ]] &&
+                if [[ "$output" == *"completed successfully"* ]] &&
                    [[ "$output" == *"SUCCESS"* ]]; then
                   echo "Output matches!"
                 else
@@ -97,8 +91,6 @@ spec:
           value: "quay.io/vanguard_tests/unsigned-rpms:latest"
         - name: image-digest
           value: "sha256:076ed8309d59999feab05c43b81bc5134dde3fc974ae127bc6cedf5d95751c2e"
-        - name: fail-unsigned
-          value: $(params.FAIL_UNSIGNED)
         taskRef:
           name: rpms-signature-scan
           kind: Task
@@ -132,8 +124,8 @@ spec:
                 exit=0
 
                 output=$(params.TEST_OUTPUT)
-                if [[ "$output" == *"completed: Not all RPMs were confirmed to be signed. Refer to Tekton task output for details"* ]] &&
-                   [[ "$output" == *"ERROR"* ]]; then
+                if [[ "$output" == *"completed successfully"* ]] &&
+                   [[ "$output" == *"SUCCESS"* ]]; then
                   echo "Output matches!"
                 else
                   echo "Output does not match!"
@@ -165,8 +157,6 @@ spec:
           value: "quay.io/vanguard_tests/image_index:latest"
         - name: image-digest
           value: "sha256:da4f388bb1f5ed8673d26f42a3175dadcd41c63e5eec44ad67023a44f643482f"
-        - name: fail-unsigned
-          value: $(params.FAIL_UNSIGNED)
         taskRef:
           name: rpms-signature-scan
           kind: Task
@@ -200,7 +190,7 @@ spec:
                 exit=0
 
                 output=$(params.TEST_OUTPUT)
-                if [[ "$output" == *"completed: No unsigned RPMs"* ]] &&
+                if [[ "$output" == *"completed successfully"* ]] &&
                    [[ "$output" == *"SUCCESS"* ]]; then
                   echo "Output matches!"
                 else

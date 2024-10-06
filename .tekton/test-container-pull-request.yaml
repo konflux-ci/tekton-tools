@@ -12,7 +12,7 @@ metadata:
     pipelinesascode.tekton.dev/task: >-
       [
       tasks/generate-odcs-compose/0.2/generate-odcs-compose.yaml,
-      tasks/rpms-signature-scan/0.1/rpms-signature-scan.yaml,
+      tasks/rpms-signature-scan/0.2/rpms-signature-scan.yaml,
       tasks/provision-env-with-ephemeral-namespace/0.1/provision-env-with-ephemeral-namespace.yaml
       ]
   creationTimestamp: null
@@ -398,8 +398,6 @@ spec:
         value: $(tasks.build-container.results.IMAGE_URL)
       - name: image-digest
         value: $(tasks.build-container.results.IMAGE_DIGEST)
-      - name: fail-unsigned
-        value: false
     - name: provision-env-with-ephemeral-namespace
       runAfter:
       - clone-repository
