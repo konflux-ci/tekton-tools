@@ -44,7 +44,7 @@ spec:
         optional: true
   steps:
     - name: rpms-signature-scan
-      image: quay.io/redhat-appstudio/tools@sha256:2cf10135c2b71dcc6c777a9944aa40a9f2a634682ed376cfa7cdf32f2131ae6f
+      image: quay.io/redhat-appstudio/tools@sha256:f1607cfa3886ab31e8d40897b8bf899c2d1d5f1c88337dc2cfb93d8107d176ff
       volumeMounts:
         - name: workdir
           mountPath: "$(params.workdir)"
