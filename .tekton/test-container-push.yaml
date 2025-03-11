@@ -117,7 +117,6 @@ spec:
           value: |
             set -x
             rsync -a --delete $ARTIFACTS_PATH/rpms-signature-scan ./task
-            rsync -a --delete $ARTIFACTS_PATH/provision-env-with-ephemeral-namespace ./task
             ./hack/generate-pipelines-readme.py
     workspaces:
     - name: workspace
