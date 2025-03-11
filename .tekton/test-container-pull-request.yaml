@@ -11,7 +11,6 @@ metadata:
       == "main"
     pipelinesascode.tekton.dev/task: >-
       [
-      tasks/generate-odcs-compose/0.2/generate-odcs-compose.yaml,
       tasks/rpms-signature-scan/0.2/rpms-signature-scan.yaml,
       tasks/provision-env-with-ephemeral-namespace/0.1/provision-env-with-ephemeral-namespace.yaml
       ]
@@ -289,15 +288,6 @@ spec:
       params:
       - name: config_file_path
         value: source/.kube-linter.yaml
-    - name: generate-odcs-compose
-      runAfter:
-      - clone-repository
-      workspaces:
-      - name: workdir
-        workspace: workspace
-      taskRef:
-        name: generate-odcs-compose
-        kind: Task
     - name: build-container
       params:
       - name: IMAGE
@@ -316,7 +306,6 @@ spec:
         value: $(tasks.clone-repository.results.commit)
       runAfter:
       - prefetch-dependencies
-      - generate-odcs-compose
       taskRef:
         params:
         - name: name
