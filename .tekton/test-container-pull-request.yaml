@@ -11,8 +11,7 @@ metadata:
       == "main"
     pipelinesascode.tekton.dev/task: >-
       [
-      tasks/rpms-signature-scan/0.2/rpms-signature-scan.yaml,
-      tasks/provision-env-with-ephemeral-namespace/0.1/provision-env-with-ephemeral-namespace.yaml
+      tasks/rpms-signature-scan/0.2/rpms-signature-scan.yaml
       ]
   creationTimestamp: null
   labels:
@@ -404,19 +403,6 @@ spec:
         - name: kind
           value: task
         resolver: bundles
-    - name: provision-env-with-ephemeral-namespace
-      runAfter:
-      - clone-repository
-      taskRef:
-        name: provision-env-with-ephemeral-namespace
-        kind: Task
-      params:
-      - name: KONFLUXNAMESPACE
-        value: "$(context.pipelineRun.namespace)"
-      - name: PIPELINERUN_NAME
-        value: "$(context.pipelineRun.name)"
-      - name: PIPELINERUN_UID
-        value: "$(context.pipelineRun.uid)"
     workspaces:
     - name: workspace
     - name: git-auth
