@@ -13,8 +13,8 @@
   },
   "packageRules": [
     {
-      "packagePatterns": [
-        "*"
+      "matchPackageNames": [
+        "quay.io/konflux-ci/tools"
       ],
       "schedule": ["at any time"]
     }
