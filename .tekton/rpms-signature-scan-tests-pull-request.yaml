@@ -14,7 +14,7 @@ metadata:
     appstudio.openshift.io/application: tekton-tools
     appstudio.openshift.io/component: tekton-tools
     pipelines.appstudio.openshift.io/type: build
-  name: rpms-signature-scan-pull-request
+  name: rpms-signature-scan-tests-pull-request
   namespace: konflux-vanguard-tenant
 spec:
   pipelineSpec:
