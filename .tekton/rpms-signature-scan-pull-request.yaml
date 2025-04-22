@@ -7,8 +7,11 @@ metadata:
     build.appstudio.redhat.com/pull_request_number: '{{pull_request_number}}'
     build.appstudio.redhat.com/target_branch: '{{target_branch}}'
     pipelinesascode.tekton.dev/max-keep-runs: "3"
-    pipelinesascode.tekton.dev/on-event: '[pull_request]'
-    pipelinesascode.tekton.dev/on-target-branch: '[main]'
+    pipelinesascode.tekton.dev/on-cel-expression: event == "pull_request" && target_branch
+      == "main" && ( "tasks/rpms-signature-scan/0.2/***".pathChanged() || 
+      ".tekton/test-container-pull-request.yaml".pathChanged() || 
+      ".tekton/rpms-signature-scan-pull-request.yaml".pathChanged()
+      )
     pipelinesascode.tekton.dev/task: tasks/rpms-signature-scan/0.2/rpms-signature-scan.yaml
   labels:
     appstudio.openshift.io/application: tekton-tools
