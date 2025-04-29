@@ -1,6 +1,7 @@
 # rpms-signature-scan.yaml task
 
 ## Description:
+
 This tasks scans RPMs in an image and provide information about RPMs signatures.
 
 The RPM's signature keys as well as the unsigned RPMs are saved into the `RPMS_DATA` 
