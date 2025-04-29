@@ -4,7 +4,7 @@
 This tasks scans RPMs in an image and provide information about RPMs signatures.
 
 The RPM's signature keys as well as the unsigned RPMs are saved into the `RPMS_DATA` 
-result path and they are processed by EC to detemine whether the task should fail
+result path and they are processed by Conforma to detemine whether the task should fail
 or not.
 
 The task will fail in case one or more image have failed the scan
