@@ -26,6 +26,8 @@ spec:
     value: '{{source_url}}'
   - name: revision
     value: '{{revision}}'
+  - name: target-branch
+    value: '{{target_branch}}'
   - name: output-image
     value: quay.io/redhat-user-workloads/konflux-vanguard-tenant/tekton-tools/rpms-signature-scan:{{revision}}
   - name: dockerfile
@@ -101,6 +103,9 @@ spec:
     - default: "false"
       description: Add built image into an OCI image index
       name: build-image-index
+      type: string
+    - default: ""
+      name: target-branch
       type: string
     results:
     - description: ""
