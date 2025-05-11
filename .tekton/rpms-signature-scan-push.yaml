@@ -199,40 +199,45 @@ spec:
       runAfter:
       - prefetch-dependencies
       taskSpec:
+        metadata: {}
         params:
-        - name: SOURCE_ARTIFACT
-          description: The Trusted Artifact URI pointing to the artifact with
-            the application source code.
-        - name: CONTEXT
-          description: Path to the directory to use as context.
+        - description: The Trusted Artifact URI pointing to the artifact with the
+            application source code.
+          name: SOURCE_ARTIFACT
+        - description: Path to the directory to use as context.
+          name: CONTEXT
           type: string
-        volumes:
-          - name: workdir
-            emptyDir: {}
+        spec: null
         stepTemplate:
+          computeResources: {}
           env:
           - name: SOURCE_CODE_DIR
             value: source
           - name: CONTEXT
             value: $(params.CONTEXT)
           volumeMounts:
-            - mountPath: /var/workdir
-              name: workdir
+          - mountPath: /var/workdir
+            name: workdir
         steps:
-        - name: use-trusted-artifact
+        - args:
+          - use
+          - $(params.SOURCE_ARTIFACT)=/var/workdir/source
+          computeResources: {}
           image: quay.io/konflux-ci/build-trusted-artifacts:latest@sha256:edd8e3affc389320b15b9de8a5aedbf7b0463211b77c981563a2cfa20076b0c0
-          args:
-            - use
-            - $(params.SOURCE_ARTIFACT)=/var/workdir/source
-        - name: yaml-lint
+          name: use-trusted-artifact
+        - computeResources: {}
           image: registry.access.redhat.com/ubi9/python-39:latest
-          workingDir: /var/workdir
+          name: yaml-lint
           script: |
             cd "${SOURCE_CODE_DIR}"
             python3 -m pip install pipenv
             python3 -m pipenv sync --dev
             # run yamlint only on the context we use to build the task
             python3 -m pipenv run yamllint "${CONTEXT}" && echo "lint_yamls: SUCCESS"
+          workingDir: /var/workdir
+        volumes:
+        - emptyDir: {}
+          name: workdir
     - name: build-container
       params:
       - name: IMAGE
@@ -362,7 +367,8 @@ spec:
       optional: true
     - name: netrc
       optional: true
-  taskRunTemplate: {}
+  taskRunTemplate:
+    serviceAccountName: build-pipeline-rpms-signature-scan
   workspaces:
   - name: git-auth
     secret:
