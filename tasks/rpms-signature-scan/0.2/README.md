@@ -1,4 +1,4 @@
-# rpms-signature-scan.yaml task
+# rpms-signature-scan task
 
 ## Description:
 
