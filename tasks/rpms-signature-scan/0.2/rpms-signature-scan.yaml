@@ -73,7 +73,7 @@ spec:
           --image-digest "${IMAGE_DIGEST}" \
           --workdir "${WORKDIR}" \
     - name: output-results
-      image: quay.io/konflux-ci/konflux-test:v1.4.30@sha256:3952b2073a937d5d37007d41244879d7e219fcf7c7684dec79c7646994c5dc42
+      image: quay.io/konflux-ci/konflux-test:v1.4.31@sha256:a7cae9e96663e277a3904d0c78630508ddb6cc8eebaa912a840bd20f68dcaad1
       volumeMounts:
         - name: workdir
           mountPath: "$(params.workdir)"
