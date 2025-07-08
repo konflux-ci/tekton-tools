@@ -27,7 +27,7 @@ spec:
   - name: revision
     value: '{{revision}}'
   - name: output-image
-    value: quay.io/redhat-user-workloads/konflux-vanguard-tenant/rpms-signature-scan-v02:{{revision}}
+    value: quay.io/redhat-user-workloads/konflux-vanguard-tenant/tekton-tools/rpms-signature-scan-v02:{{revision}}
   - name: dockerfile
     value: Dockerfile
   - name: path-context
