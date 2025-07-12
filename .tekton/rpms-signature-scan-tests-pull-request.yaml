@@ -51,7 +51,7 @@ spec:
               description: Information about images processed
           steps:
             - name: verify-output
-              image: registry.access.redhat.com/ubi9/ubi-minimal:9.6-1751286687
+              image: registry.access.redhat.com/ubi9/ubi-minimal:9.6-1752069876
               script: |
                 #!/bin/bash
                 set -ex
@@ -117,7 +117,7 @@ spec:
               description: Information about images processed
           steps:
             - name: verify-output
-              image: registry.access.redhat.com/ubi9/ubi-minimal:9.6-1751286687
+              image: registry.access.redhat.com/ubi9/ubi-minimal:9.6-1752069876
               script: |
                 #!/bin/bash
                 set -ex
@@ -183,7 +183,7 @@ spec:
               description: Information about images processed
           steps:
             - name: verify-output
-              image: registry.access.redhat.com/ubi9/ubi-minimal:9.6-1751286687
+              image: registry.access.redhat.com/ubi9/ubi-minimal:9.6-1752069876
               script: |
                 #!/bin/bash
                 set -ex
