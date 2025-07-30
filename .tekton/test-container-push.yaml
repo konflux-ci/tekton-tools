@@ -116,7 +116,7 @@ spec:
         - name: SCRIPT
           value: |
             set -x
-            rsync -a --delete $ARTIFACTS_PATH/rpms-signature-scan ./task
+            rsync -a --delete $ARTIFACTS_PATH/rpms-signature-scan/0.2 ./task/rpms-signature-scan
             ./hack/generate-pipelines-readme.py
     workspaces:
     - name: workspace
