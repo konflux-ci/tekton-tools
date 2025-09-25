@@ -1,11 +1,14 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
-    "config:base"
+    "config:recommended"
   ],
   "dependencyDashboard": false,
   "tekton": {
-    "fileMatch": ["\\.yaml$", "\\.yml$"],
+    "managerFilePatterns": [
+      "/\\.yaml$/",
+      "/\\.yml$/"
+    ],
     "includePaths": [
       "tasks/rpms-signature-scan/0.2/**",
       ".tekton/**"
@@ -16,7 +19,9 @@
       "matchPackageNames": [
         "quay.io/konflux-ci/tools"
       ],
-      "schedule": ["at any time"]
+      "schedule": [
+        "at any time"
+      ]
     }
   ]
 }
