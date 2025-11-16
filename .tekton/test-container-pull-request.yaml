@@ -453,7 +453,8 @@ spec:
     workspaces:
     - name: workspace
     - name: git-auth
-  taskRunTemplate: {}
+  taskRunTemplate:
+    serviceAccountName: build-pipeline-test-container
   workspaces:
   - name: workspace
     volumeClaimTemplate:
