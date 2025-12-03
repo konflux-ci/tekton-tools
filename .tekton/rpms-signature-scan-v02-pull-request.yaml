@@ -31,7 +31,7 @@ spec:
   - name: dockerfile
     value: Dockerfile
   - name: path-context
-    value: tasks/rpms-signature-scan/0.2
+    value: tasks/rpms-signature-scan/0.3
   pipelineSpec:
     finally:
     - name: show-summary

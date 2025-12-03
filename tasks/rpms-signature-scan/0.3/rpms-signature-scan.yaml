@@ -4,7 +4,7 @@ kind: Task
 metadata:
   name: rpms-signature-scan
   labels:
-    app.kubernetes.io/version: "0.2.2"
+    app.kubernetes.io/version: "0.3"
 spec:
   description: |-
     Scans RPMs in an image and provide information about RPMs signatures.
