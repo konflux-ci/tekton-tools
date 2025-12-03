@@ -88,6 +88,7 @@ spec:
         status=$(cat "${WORKDIR}"/status)
         rpms_data=$(cat "${WORKDIR}"/results)
         images_processed=$(cat "${WORKDIR}"/images_processed)
+
         if [ "$status" == "ERROR" ]; then
           note="Task $(context.task.name) failed to scan images. Refer to Tekton task output for details"
         else

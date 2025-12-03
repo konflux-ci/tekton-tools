@@ -46,5 +46,4 @@ jq -c '.' | while read -r task_info; do
         # Replace the entire taskRef section
         pmt modify -f "$pipeline_file" generic replace "$pmt_path" "$updated_content"
     fi
-
 done
