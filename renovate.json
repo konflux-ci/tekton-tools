@@ -9,6 +9,7 @@
       "/\\.yaml$/",
       "/\\.yml$/"
     ],
+    "schedule": ["* * * * *"],
     "includePaths": [
       "tasks/rpms-signature-scan/0.2/**",
       ".tekton/**"
