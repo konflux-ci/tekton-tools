@@ -43,7 +43,8 @@ jq -c '.' | while read -r task_info; do
 
         echo "Updating bundle reference in task '$task_name' from konflux-vanguard to tekton-catalog"
 
-        # Replace the entire taskRef section
+        # Replace the entire taskRef section instead of only update the bundle value
+        # This is a workaround for https://issues.redhat.com/browse/STONEBLD-4024
         pmt modify -f "$pipeline_file" generic replace "$pmt_path" "$updated_content"
     fi
 done
