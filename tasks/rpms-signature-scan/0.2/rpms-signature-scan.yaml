@@ -96,6 +96,7 @@ spec:
         fi
 
         TEST_OUTPUT=$(make_result_json -r "$status" -t "$note")
+
         echo "${TEST_OUTPUT}" | tee "$(results.TEST_OUTPUT.path)"
         echo "${rpms_data}" | tee "$(results.RPMS_DATA.path)"
         echo "${images_processed}" | tee "$(results.IMAGES_PROCESSED.path)"
