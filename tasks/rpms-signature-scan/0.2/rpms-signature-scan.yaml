@@ -48,7 +48,7 @@ spec:
         optional: true
   steps:
     - name: rpms-signature-scan
-      image: quay.io/konflux-ci/tools@sha256:32855ac28cd967b2016e097f603abe033caa68350ee00ada75f33a8de58fb749
+      image: quay.io/konflux-ci/tools@sha256:2a91d2de1bba7ee5d15fa76b02e95350efe7b96cc64285f79e7977822fd7870c
       volumeMounts:
         - name: workdir
           mountPath: "$(params.workdir)"
