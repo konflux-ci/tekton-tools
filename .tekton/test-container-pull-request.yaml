@@ -264,7 +264,8 @@ spec:
 
             python -m pip install gitlint
             git config --global --add safe.directory '*'
-            git fetch origin "$(params.target-branch)"
+            # Fetch with explicit refspec to create remote tracking branch
+            git fetch origin "$(params.target-branch):refs/remotes/origin/$(params.target-branch)"
             gitlint --fail-without-commits --commits "origin/$(params.target-branch)..HEAD"
     - name: run-kubelint
       runAfter:
