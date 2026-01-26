@@ -49,6 +49,13 @@ spec:
   steps:
     - name: rpms-signature-scan
       image: quay.io/konflux-ci/tools@sha256:b8b5e37792281c20e11b8f92e7c8ab1b4ca83baa4c0bbb576cc939c215f78723
+      computeResources:
+        limits:
+          memory: 256Mi
+          cpu: 200m
+        requests:
+          memory: 256Mi
+          cpu: 200m
       volumeMounts:
         - name: workdir
           mountPath: "$(params.workdir)"
@@ -74,6 +81,13 @@ spec:
           --workdir "${WORKDIR}" \
     - name: output-results
       image: quay.io/konflux-ci/konflux-test:v1.4.46@sha256:c7e2099ad87d4c65284cba5df8488eae64d16ea0baff344c549ed7ca2415ebce
+      computeResources:
+        limits:
+          memory: 32Mi
+          cpu: 50m
+        requests:
+          memory: 32Mi
+          cpu: 50m
       volumeMounts:
         - name: workdir
           mountPath: "$(params.workdir)"
