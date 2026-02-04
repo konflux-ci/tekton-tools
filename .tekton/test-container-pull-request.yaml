@@ -310,7 +310,7 @@ spec:
         - name: name
           value: buildah
         - name: bundle
-          value: quay.io/konflux-ci/tekton-catalog/task-buildah:0.8@sha256:e6831540dcef16b9ae6e4f06f09a08e214a58d780fe34f39618b47cef045eb7e
+          value: quay.io/konflux-ci/tekton-catalog/task-buildah:0.8@sha256:62ebed75505534e5bb1fdd1eeb1cfff4363442e13565f93538a2fb68aeb6b658
         - name: kind
           value: task
         resolver: bundles
@@ -364,7 +364,7 @@ spec:
         - name: name
           value: sast-shell-check
         - name: bundle
-          value: quay.io/konflux-ci/tekton-catalog/task-sast-shell-check:0.1@sha256:200f1f9d901ede118c498bc7d236e2f60fd1a9d83724807b747f3914d90f0f08
+          value: quay.io/konflux-ci/tekton-catalog/task-sast-shell-check:0.1@sha256:1ce77003bd0e39b68df874d1ce72848ca4614c3d5d1c8ef349b892bca0091673
         - name: kind
           value: task
         resolver: bundles
