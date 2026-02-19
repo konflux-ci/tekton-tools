@@ -48,7 +48,7 @@ spec:
         optional: true
   steps:
     - name: rpms-signature-scan
-      image: quay.io/konflux-ci/tools@sha256:8ec53485813c3a47d6bd408c42d3b50db51878f782d5df75134173991f83e561
+      image: quay.io/konflux-ci/tools@sha256:a9ec40ab6d8151af2c1ecd613cd723ecca5b34b29062160e3745651d26490360
       computeResources:
         limits:
           memory: 256Mi
