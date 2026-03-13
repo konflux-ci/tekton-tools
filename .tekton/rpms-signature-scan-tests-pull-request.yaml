@@ -218,3 +218,145 @@ spec:
                 fi
 
                 exit $exit
+
+      - name: test-retry-transient-error-recovers
+        taskSpec:
+          steps:
+            - name: test-retry
+              image: registry.access.redhat.com/ubi9/ubi-minimal:9.7-1773204619
+              script: |
+                #!/bin/bash
+                set -euo pipefail
+
+                retry_on_transient() {
+                  local max_retries="${RETRY_MAX:-3}"
+                  local base_delay=5
+                  local max_delay=60
+                  local attempt=0
+                  local exit_code=0
+                  local stderr_file
+                  stderr_file=$(mktemp)
+
+                  while [ "$attempt" -le "$max_retries" ]; do
+                    exit_code=0
+                    "$@" 2>"$stderr_file" || exit_code=$?
+
+                    if [ "$exit_code" -eq 0 ]; then
+                      rm -f "$stderr_file"
+                      return 0
+                    fi
+
+                    cat "$stderr_file" >&2
+
+                    if grep -qiE '502 Bad Gateway|503 Service|429|connection reset|connection refused|Could not resolve host|unexpected end of JSON|timeout|ETIMEDOUT' "$stderr_file"; then
+                      attempt=$((attempt + 1))
+                      if [ "$attempt" -gt "$max_retries" ]; then
+                        echo "ERROR: Transient error persisted after $max_retries retries" >&2
+                        rm -f "$stderr_file"
+                        return "$exit_code"
+                      fi
+                      local delay=$(( base_delay * (1 << (attempt - 1)) + (RANDOM % 4) ))
+                      [ "$delay" -gt "$max_delay" ] && delay=$max_delay
+                      echo "WARNING: Transient error detected (attempt $attempt/$max_retries). Retrying in ${delay}s..." >&2
+                      sleep "$delay"
+                    else
+                      rm -f "$stderr_file"
+                      return "$exit_code"
+                    fi
+                  done
+
+                  rm -f "$stderr_file"
+                  return "$exit_code"
+                }
+
+                # Mock command that fails with a transient error on the first
+                # call and succeeds on the second call.
+                counter_file=$(mktemp)
+                echo "0" > "$counter_file"
+
+                mock_cmd() {
+                  count=$(cat "$counter_file")
+                  count=$((count + 1))
+                  echo "$count" > "$counter_file"
+                  if [ "$count" -lt 2 ]; then
+                    echo "502 Bad Gateway" >&2
+                    return 1
+                  fi
+                  echo "ok"
+                  return 0
+                }
+
+                export RETRY_MAX=3
+                output=$(retry_on_transient mock_cmd)
+                if [ "$output" = "ok" ]; then
+                  echo "PASS: Recovered after transient error"
+                else
+                  echo "FAIL: Expected recovery, got: $output"
+                  exit 1
+                fi
+                rm -f "$counter_file"
+
+      - name: test-retry-permanent-error-fails-immediately
+        taskSpec:
+          steps:
+            - name: test-permanent-failure
+              image: registry.access.redhat.com/ubi9/ubi-minimal:9.7-1773204619
+              script: |
+                #!/bin/bash
+                set -euo pipefail
+
+                retry_on_transient() {
+                  local max_retries="${RETRY_MAX:-3}"
+                  local base_delay=5
+                  local max_delay=60
+                  local attempt=0
+                  local exit_code=0
+                  local stderr_file
+                  stderr_file=$(mktemp)
+
+                  while [ "$attempt" -le "$max_retries" ]; do
+                    exit_code=0
+                    "$@" 2>"$stderr_file" || exit_code=$?
+
+                    if [ "$exit_code" -eq 0 ]; then
+                      rm -f "$stderr_file"
+                      return 0
+                    fi
+
+                    cat "$stderr_file" >&2
+
+                    if grep -qiE '502 Bad Gateway|503 Service|429|connection reset|connection refused|Could not resolve host|unexpected end of JSON|timeout|ETIMEDOUT' "$stderr_file"; then
+                      attempt=$((attempt + 1))
+                      if [ "$attempt" -gt "$max_retries" ]; then
+                        echo "ERROR: Transient error persisted after $max_retries retries" >&2
+                        rm -f "$stderr_file"
+                        return "$exit_code"
+                      fi
+                      local delay=$(( base_delay * (1 << (attempt - 1)) + (RANDOM % 4) ))
+                      [ "$delay" -gt "$max_delay" ] && delay=$max_delay
+                      echo "WARNING: Transient error detected (attempt $attempt/$max_retries). Retrying in ${delay}s..." >&2
+                      sleep "$delay"
+                    else
+                      rm -f "$stderr_file"
+                      return "$exit_code"
+                    fi
+                  done
+
+                  rm -f "$stderr_file"
+                  return "$exit_code"
+                }
+
+                # Mock command that fails with a non-transient error.
+                # The retry function should fail immediately without retrying.
+                perm_fail() {
+                  echo "image not found: no such manifest" >&2
+                  return 1
+                }
+
+                export RETRY_MAX=3
+                if retry_on_transient perm_fail; then
+                  echo "FAIL: Should have failed on permanent error"
+                  exit 1
+                else
+                  echo "PASS: Failed immediately on permanent error"
+                fi
