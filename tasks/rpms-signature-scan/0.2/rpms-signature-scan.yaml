@@ -4,7 +4,7 @@ kind: Task
 metadata:
   name: rpms-signature-scan
   labels:
-    app.kubernetes.io/version: "0.2.1"
+    app.kubernetes.io/version: "0.2.2"
 spec:
   description: |-
     Scans RPMs in an image and provide information about RPMs signatures.
@@ -72,10 +72,50 @@ spec:
           value: "$(params.workdir)"
       script: |
         #!/bin/bash
-        set -ex
-        set -o pipefail
+        set -euo pipefail
 
-        rpm_verifier \
+        retry_on_transient() {
+          local max_retries="${RETRY_MAX:-3}"
+          local base_delay=5
+          local max_delay=60
+          local attempt=0
+          local exit_code=0
+          local stderr_file
+          stderr_file=$(mktemp)
+
+          while [ "$attempt" -le "$max_retries" ]; do
+            exit_code=0
+            "$@" 2>"$stderr_file" || exit_code=$?
+
+            if [ "$exit_code" -eq 0 ]; then
+              rm -f "$stderr_file"
+              return 0
+            fi
+
+            cat "$stderr_file" >&2
+
+            if grep -qiE '502 Bad Gateway|503 Service|429|connection reset|connection refused|Could not resolve host|unexpected end of JSON|timeout|ETIMEDOUT' "$stderr_file"; then
+              attempt=$((attempt + 1))
+              if [ "$attempt" -gt "$max_retries" ]; then
+                echo "ERROR: Transient error persisted after $max_retries retries" >&2
+                rm -f "$stderr_file"
+                return "$exit_code"
+              fi
+              local delay=$(( base_delay * (1 << (attempt - 1)) + (RANDOM % 4) ))
+              [ "$delay" -gt "$max_delay" ] && delay=$max_delay
+              echo "WARNING: Transient error detected (attempt $attempt/$max_retries). Retrying in ${delay}s..." >&2
+              sleep "$delay"
+            else
+              rm -f "$stderr_file"
+              return "$exit_code"
+            fi
+          done
+
+          rm -f "$stderr_file"
+          return "$exit_code"
+        }
+
+        retry_on_transient rpm_verifier \
           --image-url "${IMAGE_URL}" \
           --image-digest "${IMAGE_DIGEST}" \
           --workdir "${WORKDIR}" \
