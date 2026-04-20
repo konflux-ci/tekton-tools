@@ -1,3 +1,3 @@
-FROM registry.access.redhat.com/ubi9/ubi-minimal:9.7-1776104705
+FROM registry.access.redhat.com/ubi9/ubi-minimal:9.7-1776645941
 
 USER 0
