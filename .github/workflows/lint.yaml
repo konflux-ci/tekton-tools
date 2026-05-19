@@ -1,0 +1,22 @@
+name: Lint
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  merge_group:
+    types: [checks_requested]
+jobs:
+  validate-agents-md:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: Validate AGENTS.md line count
+        run: |
+          MAX_LINES=300
+          ACTUAL_LINES=$(wc -l < AGENTS.md)
+          if [ "$ACTUAL_LINES" -gt "$MAX_LINES" ]; then
+            echo "::error::AGENTS.md has $ACTUAL_LINES lines, must be <= $MAX_LINES"
+            exit 1
+          fi
