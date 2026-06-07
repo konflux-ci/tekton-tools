@@ -10,7 +10,7 @@ those tasks, and supporting configuration for Kerberos-based compose generation.
 ## Project Structure
 
 - `tasks/<name>/<version>/` -- Versioned Tekton Task definitions (YAML), each
-  with its own `kustomization.yaml`, `README.md`, and optional `MIGRATION.md`
+  with its own `README.md` and optional `MIGRATION.md`
 - `tasks/<name>/OWNERS` -- Per-task approver lists (Prow-style OWNERS files)
 - `.tekton/` -- Pipelines-as-Code PipelineRun definitions that run on PRs and
   pushes (Konflux CI). These build container images and run task-level tests.
@@ -28,12 +28,13 @@ those tasks, and supporting configuration for Kerberos-based compose generation.
   Generates ODCS composes for RPM repositories.
 - **provision-env-with-ephemeral-namespace** (`tasks/provision-env-with-ephemeral-namespace/`):
   **Deprecated**. Replaced by `eaas-provision-space`.
+
 ## Task Versioning Convention
 
 Tasks follow `<name>/<major>.<minor>/` directory layout:
 - Bump the minor version for backwards-compatible changes
 - Bump the major version for breaking changes
-- Each version directory contains the task YAML, `kustomization.yaml`, and `README.md`
+- Each version directory contains the task YAML and `README.md`
 - Breaking changes require a `MIGRATION.md` with user-facing migration steps
 - Patch versions (e.g. `0.2.1`) use migration scripts in `migrations/<version>.sh`
   and update the `app.kubernetes.io/version` label in the task YAML
@@ -64,15 +65,27 @@ against known container images and verifying the task results match expected out
 ## How to Add or Update a Task
 
 1. Create or edit `tasks/<name>/<version>/<name>.yaml` with the Tekton Task spec
-2. Add a `kustomization.yaml` referencing the task YAML
-3. Add a `README.md` documenting parameters, results, and usage
-4. If breaking changes: create `MIGRATION.md` with migration steps
-5. Add an `OWNERS` file listing approvers for the task
-6. Add a `.tekton/<name>-pull-request.yaml` PipelineRun to test the task on PRs
-7. Add a `.tekton/<name>-push.yaml` PipelineRun for post-merge builds
+2. Add a `README.md` documenting parameters, results, and usage
+3. If breaking changes: create `MIGRATION.md` with migration steps
+4. Add an `OWNERS` file listing approvers for the task
+5. Add a `.tekton/<name>-pull-request.yaml` PipelineRun to test the task on PRs
+6. Add a `.tekton/<name>-push.yaml` PipelineRun for post-merge builds
 
 ## Kerberos Configuration
 
 The generate-odcs-compose task requires Kerberos authentication. The setup
 involves a keytab secret and a CronJob (`config/cache-cronjob.yaml`) that
 refreshes the Kerberos cache every 8 hours. See `README.md` for details.
+
+## AI Skills
+
+Skills live in `skills/` and are symlinked to `.cursor/skills` and `.claude/skills`
+for IDE discovery.
+
+| Skill | Purpose |
+|-------|---------|
+| run-lints-and-tests | How to run yamllint, gitlint, and kube-linter locally |
+| pr-definition-of-done | Checklist for merge-ready PRs |
+| ci-cd-quirks | Non-obvious Konflux CI/CD details and environment |
+| add-or-update-task | Step-by-step guide for adding or modifying Tekton Tasks |
+| debug-ci-failures | Troubleshooting Konflux pipeline and task execution failures |
