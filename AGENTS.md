@@ -28,9 +28,6 @@ those tasks, and supporting configuration for Kerberos-based compose generation.
   Generates ODCS composes for RPM repositories.
 - **provision-env-with-ephemeral-namespace** (`tasks/provision-env-with-ephemeral-namespace/`):
   **Deprecated**. Replaced by `eaas-provision-space`.
-- **create-pull-request** (`tasks/create-pull-request.yaml`): Clones a target
-  repo, runs a script, and creates a pull request with the changes.
-
 ## Task Versioning Convention
 
 Tasks follow `<name>/<major>.<minor>/` directory layout:
