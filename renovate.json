@@ -17,6 +17,12 @@
   },
   "packageRules": [
     {
+      "matchDatasources": [
+        "docker"
+      ],
+      "pinDigests": true
+    },
+    {
       "matchPackageNames": [
         "quay.io/konflux-ci/tools"
       ],
