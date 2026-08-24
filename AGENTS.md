@@ -62,6 +62,20 @@ against known container images and verifying the task results match expected out
 - YAML files are linted with yamllint (config in `.yamllint`)
 - Kubernetes manifests are linted with kube-linter (config in `.kube-linter.yaml`)
 
+## Single-file verification
+
+After a small change, lint YAML and syntax-check shell for the **files you edited**.
+
+1. Run `pipenv sync --dev` if the environment is missing.
+2. Run `pipenv run yamllint <yaml-file>` and `bash -n <script>`.
+
+Example (replace the paths with the files you changed):
+
+```bash
+pipenv run yamllint tasks/rpms-signature-scan/0.2/rpms-signature-scan.yaml
+bash -n tasks/rpms-signature-scan/0.2/migrations/0.2.1.sh
+```
+
 ## How to Add or Update a Task
 
 1. Create or edit `tasks/<name>/<version>/<name>.yaml` with the Tekton Task spec
