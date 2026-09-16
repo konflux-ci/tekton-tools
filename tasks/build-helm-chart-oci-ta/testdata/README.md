@@ -6,6 +6,7 @@ Charts used by `.tekton/build-helm-chart-oci-ta-tests-pull-request.yaml`.
 |---------|-----------|
 | `chart/` | Default overwrite path (`OVERWRITE_CHART_NAME=true`, `SOURCE_CODE_DIR=app`): Chart.yaml `name: test-chart` is rewritten to match the IMAGE repo basename before push. `IMAGE_MAPPINGS` substitutes `localhost/test-chart:old` in `values.yaml` and templates. |
 | `product-chart/` | `OVERWRITE_CHART_NAME=false`: Chart.yaml name is kept (not rewritten). Chart `name` matches the onboarded Quay repo (`build-helm-chart-oci-ta-v04`) so CI can push without a separate ImageRepository. |
+| `chart-http-deps/` | `Chart.lock` rebuild from an HTTPS chart repository (`https://charts.jetstack.io`, trust-manager). The `charts/` directory is not committed; CI must register the HTTP repo and run `helm dependency build` before package. Requires cluster egress to jetstack. |
 
 The `templates/deployment.yaml` files are minimal Helm chart content so `helm
 package` produces a valid chart; they are not deployed in CI.

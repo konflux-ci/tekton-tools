@@ -1,0 +1,2 @@
+# Vendored subcharts must come from helm dependency build in CI, not from git.
+charts/

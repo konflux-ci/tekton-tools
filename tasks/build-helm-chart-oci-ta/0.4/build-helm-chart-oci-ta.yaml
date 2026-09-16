@@ -11,7 +11,8 @@ spec:
 
     Version 0.4 replaces the inline bash implementation with the
     helm-chart-oci Go binary from konflux-ci/tools. Parameters and results
-    match 0.3, with optional OVERWRITE_CHART_NAME for chart naming.
+    match 0.3, with optional OVERWRITE_CHART_NAME and
+    PUSH_CHART_TO_IMAGE_REPOSITORY for chart naming and push paths.
   params:
     - name: CA_TRUST_CONFIG_MAP_KEY
       description: The name of the key in the ConfigMap that contains the
@@ -80,6 +81,13 @@ spec:
         preserve the chart name from Chart.yaml and push to that OCI chart path.
       type: string
       default: "true"
+    - name: PUSH_CHART_TO_IMAGE_REPOSITORY
+      description: >-
+        When true and OVERWRITE_CHART_NAME is false, publish the chart under the
+        IMAGE repository (for per-stream Konflux ImageRepositories) instead of the
+        tenant-level chart-name path. Ignored when OVERWRITE_CHART_NAME is true.
+      type: string
+      default: "false"
   results:
     - name: IMAGE_DIGEST
       description: Digest of the OCI-Artifact just built
@@ -120,7 +128,7 @@ spec:
           cpu: 50m
           memory: 64Mi
     - name: package-and-push
-      image: quay.io/konflux-ci/tools@sha256:42490302477bb0198fc28f3c10f82344799ea76c20d4d3863197fcb66ef5599e
+      image: quay.io/konflux-ci/tools@sha256:0a79b28639d20d0a794b04a87f664399de0311a147c58564dda530dd379e3238
       workingDir: /var/workdir
       env:
         - name: IMAGE
@@ -143,6 +151,8 @@ spec:
           value: $(params.APP_VERSION)
         - name: OVERWRITE_CHART_NAME
           value: $(params.OVERWRITE_CHART_NAME)
+        - name: PUSH_CHART_TO_IMAGE_REPOSITORY
+          value: $(params.PUSH_CHART_TO_IMAGE_REPOSITORY)
       computeResources:
         limits:
           cpu: 100m
