@@ -27,6 +27,8 @@ spec:
       value: quay.io/redhat-user-workloads/konflux-vanguard-tenant/tekton-tools/build-helm-chart-oci-ta-v04:helm-e2e-on-pr-{{revision}}
     - name: no-overwrite-output-image
       value: quay.io/redhat-user-workloads/konflux-vanguard-tenant/tekton-tools/build-helm-chart-oci-ta-v04:helm-no-overwrite-on-pr-{{revision}}
+    - name: http-deps-output-image
+      value: quay.io/redhat-user-workloads/konflux-vanguard-tenant/tekton-tools/build-helm-chart-oci-ta-v04:helm-http-deps-on-pr-{{revision}}
     - name: image-expires-after
       value: 5d
   pipelineSpec:
@@ -38,6 +40,8 @@ spec:
       - name: output-image
         type: string
       - name: no-overwrite-output-image
+        type: string
+      - name: http-deps-output-image
         type: string
       - name: image-expires-after
         type: string
@@ -124,6 +128,30 @@ spec:
             value: "preserve-test"
           - name: OVERWRITE_CHART_NAME
             value: "false"
+          - name: VALUES_FILES
+            value:
+              - values.yaml
+        taskRef:
+          name: build-helm-chart-oci-ta
+          kind: Task
+      - name: build-helm-chart-oci-ta-http-deps
+        runAfter:
+          - clone-repository
+        params:
+          - name: IMAGE
+            value: $(params.http-deps-output-image)
+          - name: SOURCE_ARTIFACT
+            value: $(tasks.clone-repository.results.SOURCE_ARTIFACT)
+          - name: COMMIT_SHA
+            value: $(tasks.clone-repository.results.commit)
+          - name: SOURCE_CODE_DIR
+            value: app
+          - name: CHART_CONTEXT
+            value: tasks/build-helm-chart-oci-ta/testdata/chart-http-deps
+          - name: CHART_VERSION
+            value: "0.3.0+httpdeps"
+          - name: APP_VERSION
+            value: "httpdeps-test"
           - name: VALUES_FILES
             value:
               - values.yaml
@@ -331,6 +359,108 @@ spec:
                 fi
 
                 echo "No-overwrite chart pushed at $image_url (title: $expected_title, version: $expected_version)"
+                echo "Additional tag: $expected_image"
+      - name: verify-chart-push-http-deps
+        runAfter:
+          - build-helm-chart-oci-ta-http-deps
+        params:
+          - name: IMAGE_URL
+            value: $(tasks.build-helm-chart-oci-ta-http-deps.results.IMAGE_URL)
+          - name: IMAGE_DIGEST
+            value: $(tasks.build-helm-chart-oci-ta-http-deps.results.IMAGE_DIGEST)
+          - name: EXPECTED_IMAGE
+            value: $(params.http-deps-output-image)
+          - name: EXPECTED_CHART_TITLE
+            value: build-helm-chart-oci-ta-v04
+          - name: EXPECTED_CHART_VERSION
+            value: "0.3.0+httpdeps"
+        taskSpec:
+          params:
+            - name: IMAGE_URL
+              type: string
+            - name: IMAGE_DIGEST
+              type: string
+            - name: EXPECTED_IMAGE
+              type: string
+            - name: EXPECTED_CHART_TITLE
+              type: string
+            - name: EXPECTED_CHART_VERSION
+              type: string
+          steps:
+            - name: verify
+              image: quay.io/konflux-ci/release-service-utils@sha256:3cb03b14ac9d90ff27070036ce2b50712e65aa285daeb28852254a745bb25dfc
+              computeResources:
+                limits:
+                  cpu: 100m
+                  memory: 64Mi
+                requests:
+                  cpu: 100m
+                  memory: 64Mi
+              script: |
+                #!/bin/bash
+                set -ex
+
+                image_url="$(params.IMAGE_URL)"
+                image_digest="$(params.IMAGE_DIGEST)"
+                expected_image="$(params.EXPECTED_IMAGE)"
+                expected_title="$(params.EXPECTED_CHART_TITLE)"
+                expected_version="$(params.EXPECTED_CHART_VERSION)"
+
+                if [[ -z "$image_url" ]]; then
+                  echo "IMAGE_URL is empty"
+                  exit 1
+                fi
+
+                if [[ "$image_url" != *"build-helm-chart-oci-ta-v04:0.3.0_httpdeps" ]]; then
+                  echo "unexpected IMAGE_URL: $image_url"
+                  exit 1
+                fi
+
+                if [[ -z "$image_digest" ]]; then
+                  echo "IMAGE_DIGEST is empty"
+                  exit 1
+                fi
+
+                raw="$(skopeo inspect --retry-times 3 --raw "docker://${image_url}")"
+                jq -e --arg title "$expected_title" --arg version "$expected_version" '
+                  .config.mediaType == "application/vnd.cncf.helm.config.v1+json" and
+                  .annotations["org.opencontainers.image.title"] == $title and
+                  .annotations["org.opencontainers.image.version"] == $version
+                ' <<< "$raw"
+
+                chart_dir="$(mktemp -d)"
+                skopeo copy --retry-times 3 "docker://${image_url}" "dir:${chart_dir}"
+                layer_digest="$(
+                  jq -r '.layers[] | select(.mediaType=="application/vnd.cncf.helm.chart.content.v1.tar+gzip") | .digest' <<< "$raw"
+                )"
+                layer_blob="${layer_digest#sha256:}"
+                layer_path="${chart_dir}/${layer_blob}"
+                if [[ ! -f "$layer_path" ]]; then
+                  layer_path="${chart_dir}/blobs/sha256/${layer_blob}"
+                fi
+                if [[ ! -f "$layer_path" ]]; then
+                  echo "failed to locate chart layer blob ${layer_digest} after skopeo copy"
+                  find "${chart_dir}" -type f | sort
+                  exit 1
+                fi
+
+                chart_listing="$(tar -tzf "$layer_path")"
+                if ! grep -Eq 'charts/trust-manager(-.*\.tgz|/Chart\.yaml)' <<< "$chart_listing"; then
+                  echo "packaged chart is missing vendored trust-manager dependency"
+                  echo "$chart_listing"
+                  exit 1
+                fi
+
+                tagged_digest="$(
+                  skopeo inspect --retry-times 3 --raw "docker://${expected_image}" \
+                    | sha256sum | awk '{print "sha256:" $1}'
+                )"
+                if [[ -n "$image_digest" && "$tagged_digest" != "$image_digest" ]]; then
+                  echo "digest mismatch: pushed=${image_digest} tagged=${tagged_digest}"
+                  exit 1
+                fi
+
+                echo "HTTP-deps chart pushed at $image_url with vendored trust-manager"
                 echo "Additional tag: $expected_image"
     workspaces:
       - name: git-auth

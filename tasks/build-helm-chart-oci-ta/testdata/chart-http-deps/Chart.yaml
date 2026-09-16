@@ -1,0 +1,13 @@
+apiVersion: v2
+name: test-chart
+description: >-
+  Chart.lock + HTTPS repository dependency fixture (jetstack trust-manager).
+  Exercises helm dependency build against a remote HTTP chart repo; see
+  testdata/README.md.
+type: application
+version: 0.0.1
+appVersion: "1.0.0"
+dependencies:
+  - name: trust-manager
+    version: v0.24.0
+    repository: https://charts.jetstack.io

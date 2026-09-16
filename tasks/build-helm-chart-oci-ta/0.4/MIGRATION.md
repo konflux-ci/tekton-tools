@@ -23,6 +23,18 @@ Product teams building the same chart from multiple Konflux components should se
 `OVERWRITE_CHART_NAME=false` and point `IMAGE` at the shared chart delivery
 repository (for example `quay.io/org/product-chart:tag`).
 
+## New parameter: `PUSH_CHART_TO_IMAGE_REPOSITORY`
+
+| Value | Behavior |
+|---|---|
+| `false` (default) | When `OVERWRITE_CHART_NAME=false`, push to `oci://<parent(IMAGE)>/<chart-name>:<version>` |
+| `true` | When `OVERWRITE_CHART_NAME=false`, push to `oci://<IMAGE>:<version>` in the component's Quay repository (Helm strict mode is relaxed when the repo basename differs from `Chart.yaml` name) |
+
+Use `OVERWRITE_CHART_NAME=false` with `PUSH_CHART_TO_IMAGE_REPOSITORY=true` when
+each release stream has its own Konflux component and Quay repository but shares
+the same `Chart.yaml` name for release (for example
+`quay.io/org/product-chart-4-22:tag` with `name: product-chart`).
+
 ## Differences from 0.3
 
 | Area | 0.3 | 0.4 |

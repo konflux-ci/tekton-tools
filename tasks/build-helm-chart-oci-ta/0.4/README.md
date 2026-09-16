@@ -23,6 +23,7 @@ Parameters and results match 0.3, plus optional chart naming control.
 |CHART_VERSION|Explicit chart version (skips git resolution)|""|false|
 |APP_VERSION|Explicit appVersion override|""|false|
 |OVERWRITE_CHART_NAME|When true, rewrite Chart.yaml name from IMAGE basename (0.3 behavior). When false, preserve Chart.yaml name.|true|false|
+|PUSH_CHART_TO_IMAGE_REPOSITORY|When true and OVERWRITE_CHART_NAME is false, push to the IMAGE repository (`oci://<IMAGE>:<version>`) instead of the tenant chart-name path.|false|false|
 
 ## Results
 |name|description|
