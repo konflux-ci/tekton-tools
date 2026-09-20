@@ -62,6 +62,10 @@ spec:
       description: A suffix to be added to the version string
       type: string
       default: ""
+    - name: ANNOTATIONS
+      type: array
+      default: []
+      description: Additional key=value annotations to apply to the Helm OCI artifact
     - name: CHART_VERSION
       description: >-
         Optional chart version string. When set, this value is used directly
@@ -161,11 +165,13 @@ spec:
           cpu: 100m
           memory: 512Mi
       args:
-        - "$(params.VALUES_FILES[*])"
+        - --annotation
+        - $(params.ANNOTATIONS[*])
+        - --values 
+        - $(params.VALUES_FILES[*])
       script: |
         #!/bin/bash
         set -ex
-
         helm-chart-oci \
           --image-url-result "$(results.IMAGE_URL.path)" \
           --image-digest-result "$(results.IMAGE_DIGEST.path)" \
