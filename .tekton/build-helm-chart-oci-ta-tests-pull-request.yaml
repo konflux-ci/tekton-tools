@@ -102,6 +102,10 @@ spec:
           - name: VALUES_FILES
             value:
               - values.yaml
+          - name: ANNOTATIONS
+            value:
+              - "test.annotation/one=value-one"
+              - "test.annotation/two=value-two"
           - name: IMAGE_MAPPINGS
             value: '[{"source":"localhost/test-chart:old","target":"quay.io/konflux-ci/tools:mapped-e2e"}]'
         taskRef:
@@ -225,6 +229,10 @@ spec:
                 fi
 
                 raw="$(skopeo inspect --retry-times 3 --raw "docker://${image_url}")"
+                jq -e '
+                  .annotations["test.annotation/one"] == "value-one" and
+                  .annotations["test.annotation/two"] == "value-two"
+                ' <<< "$raw"
                 jq -e --arg title "$expected_title" --arg version "$expected_version" '
                   .config.mediaType == "application/vnd.cncf.helm.config.v1+json" and
                   .annotations["org.opencontainers.image.title"] == $title and
