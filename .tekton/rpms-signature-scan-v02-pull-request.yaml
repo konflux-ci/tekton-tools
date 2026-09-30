@@ -186,7 +186,7 @@ spec:
         - name: name
           value: tkn-bundle-oci-ta
         - name: bundle
-          value: quay.io/konflux-ci/tekton-catalog/task-tkn-bundle-oci-ta:0.2@sha256:176713599d937ae3b0e20bc9aa097235a88b34c39c12c698ba82c57727eb9dd5
+          value: quay.io/konflux-ci/tekton-catalog/task-tkn-bundle-oci-ta:0.2.5@sha256:72ee7914c1938647d80d01058b9c871a65730124d5bde116b49b02b8523027ad
         - name: kind
           value: task
         resolver: bundles
