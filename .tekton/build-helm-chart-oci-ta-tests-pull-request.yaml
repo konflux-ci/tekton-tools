@@ -228,7 +228,11 @@ spec:
                   exit 1
                 fi
 
-                raw="$(skopeo inspect --retry-times 3 --raw "docker://${image_url}")"
+                # Pin to IMAGE_DIGEST: shared semver tags (e.g. 0.1.0_test) are
+                # overwritten by concurrent PR runs and race with inspect/copy.
+                image_ref="${image_url%:*}@${image_digest}"
+
+                raw="$(skopeo inspect --retry-times 3 --raw "docker://${image_ref}")"
                 jq -e '
                   .annotations["test.annotation/one"] == "value-one" and
                   .annotations["test.annotation/two"] == "value-two"
@@ -249,7 +253,7 @@ spec:
                 fi
 
                 chart_dir="$(mktemp -d)"
-                skopeo copy --retry-times 3 "docker://${image_url}" "dir:${chart_dir}"
+                skopeo copy --retry-times 3 "docker://${image_ref}" "dir:${chart_dir}"
                 layer_digest="$(
                   jq -r '.layers[] | select(.mediaType=="application/vnd.cncf.helm.chart.content.v1.tar+gzip") | .digest' <<< "$raw"
                 )"
@@ -348,7 +352,11 @@ spec:
                   exit 1
                 fi
 
-                raw="$(skopeo inspect --retry-times 3 --raw "docker://${image_url}")"
+                # Pin to IMAGE_DIGEST: shared semver tags are overwritten by
+                # concurrent PR runs and race with inspect.
+                image_ref="${image_url%:*}@${image_digest}"
+
+                raw="$(skopeo inspect --retry-times 3 --raw "docker://${image_ref}")"
                 jq -e --arg title "$expected_title" --arg version "$expected_version" '
                   .config.mediaType == "application/vnd.cncf.helm.config.v1+json" and
                   .annotations["org.opencontainers.image.title"] == $title and
@@ -429,7 +437,11 @@ spec:
                   exit 1
                 fi
 
-                raw="$(skopeo inspect --retry-times 3 --raw "docker://${image_url}")"
+                # Pin to IMAGE_DIGEST: shared semver tags are overwritten by
+                # concurrent PR runs and race with inspect/copy.
+                image_ref="${image_url%:*}@${image_digest}"
+
+                raw="$(skopeo inspect --retry-times 3 --raw "docker://${image_ref}")"
                 jq -e --arg title "$expected_title" --arg version "$expected_version" '
                   .config.mediaType == "application/vnd.cncf.helm.config.v1+json" and
                   .annotations["org.opencontainers.image.title"] == $title and
@@ -437,7 +449,7 @@ spec:
                 ' <<< "$raw"
 
                 chart_dir="$(mktemp -d)"
-                skopeo copy --retry-times 3 "docker://${image_url}" "dir:${chart_dir}"
+                skopeo copy --retry-times 3 "docker://${image_ref}" "dir:${chart_dir}"
                 layer_digest="$(
                   jq -r '.layers[] | select(.mediaType=="application/vnd.cncf.helm.chart.content.v1.tar+gzip") | .digest' <<< "$raw"
                 )"

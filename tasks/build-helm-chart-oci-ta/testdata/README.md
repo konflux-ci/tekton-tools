@@ -15,8 +15,9 @@ package` produces a valid chart; they are not deployed in CI.
 
 The two CI branches use different semver tags (`0.1.0_test` vs `0.2.0_preserve`)
 and different `IMAGE` tags (`helm-e2e-on-pr-*` vs `helm-no-overwrite-on-pr-*`).
-Verification checks both via `skopeo` on the semver ref and the additional tag.
-That proves each branch pushed and tagged its own artifact.
+Verification asserts the semver `IMAGE_URL` shape, then `skopeo` inspects/copies by
+`IMAGE_DIGEST` (shared semver tags race under concurrent PRs) and checks the
+PR-unique additional tag matches that digest.
 
 That does **not** prove `OVERWRITE_CHART_NAME=false` was honored: when Chart.yaml
 `name` matches the IMAGE repo basename (`build-helm-chart-oci-ta-v04`), a broken
