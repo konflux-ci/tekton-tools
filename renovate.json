@@ -24,6 +24,15 @@
       "pinDigests": true
     },
     {
+      "matchDatasources": [
+        "docker"
+      ],
+      "matchUpdateTypes": [
+        "digest"
+      ],
+      "rebaseWhen": "conflicted"
+    },
+    {
       "matchPackageNames": [
         "quay.io/konflux-ci/tools"
       ],
