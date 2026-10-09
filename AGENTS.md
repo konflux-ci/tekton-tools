@@ -112,3 +112,4 @@ for IDE discovery.
 | ci-cd-quirks | Non-obvious Konflux CI/CD details and environment |
 | add-or-update-task | Step-by-step guide for adding or modifying Tekton Tasks |
 | debug-ci-failures | Troubleshooting Konflux pipeline and task execution failures |
+| retro-filing-policy | Retro output (PR close or `/fs-retro`). Keep `proposals` empty unless the human comment explicitly says to file issues. |
