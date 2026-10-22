@@ -194,7 +194,7 @@ spec:
               type: string
           steps:
             - name: verify
-              image: quay.io/konflux-ci/release-service-utils@sha256:3e3b9f5ce4b4575997573ff2728c95b671b9902847934b64f6bc8f979bf01cde
+              image: quay.io/konflux-ci/release-service-utils@sha256:87a7ac6537c58b0e1aee0ea4ebbbd3a3af30ae161efcbd7121c476dd22126c3d
               computeResources:
                 limits:
                   cpu: 100m
@@ -319,7 +319,7 @@ spec:
               type: string
           steps:
             - name: verify
-              image: quay.io/konflux-ci/release-service-utils@sha256:3e3b9f5ce4b4575997573ff2728c95b671b9902847934b64f6bc8f979bf01cde
+              image: quay.io/konflux-ci/release-service-utils@sha256:87a7ac6537c58b0e1aee0ea4ebbbd3a3af30ae161efcbd7121c476dd22126c3d
               computeResources:
                 limits:
                   cpu: 100m
@@ -404,7 +404,7 @@ spec:
               type: string
           steps:
             - name: verify
-              image: quay.io/konflux-ci/release-service-utils@sha256:3e3b9f5ce4b4575997573ff2728c95b671b9902847934b64f6bc8f979bf01cde
+              image: quay.io/konflux-ci/release-service-utils@sha256:87a7ac6537c58b0e1aee0ea4ebbbd3a3af30ae161efcbd7121c476dd22126c3d
               computeResources:
                 limits:
                   cpu: 100m
