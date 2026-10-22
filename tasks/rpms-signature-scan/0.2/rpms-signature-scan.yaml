@@ -53,11 +53,10 @@ spec:
       image: quay.io/konflux-ci/tools@sha256:ebd105a53cb992f9235014fce56ee6ace4db2eccfe12e13bc10b9ad3ebbd2b99
       computeResources:
         limits:
-          memory: 256Mi
-          cpu: 200m
+          memory: 384Mi
         requests:
-          memory: 256Mi
-          cpu: 200m
+          memory: 384Mi
+          cpu: 250m
       volumeMounts:
         - name: workdir
           mountPath: "$(params.workdir)"
@@ -86,10 +85,9 @@ spec:
       image: quay.io/konflux-ci/konflux-test:v1.5.9@sha256:7faaebc542c61704003fecbab81a9c81c9770b4df8c5bba18459fba3f58e9c51
       computeResources:
         limits:
-          memory: 32Mi
-          cpu: 50m
+          memory: 64Mi
         requests:
-          memory: 32Mi
+          memory: 64Mi
           cpu: 50m
       volumeMounts:
         - name: workdir
