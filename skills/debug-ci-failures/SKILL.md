@@ -31,7 +31,7 @@ a failed status.
 | `yaml-lint` | YAML syntax error or trailing whitespace | Run `pipenv run yamllint .` locally, fix reported lines |
 | `run-gitlint` | Missing `Signed-off-by` or non-conventional title | Amend commits: `git commit --amend -s` |
 | `run-gitlint` | "No commits found" | Rebase on latest `main` so git history is visible |
-| `run-kubelint` | K8s manifest issue | Run `kube-linter lint config/ tasks/ --config .kube-linter.yaml` locally |
+| `run-kubelint` | K8s manifest issue | Run `kube-linter lint tasks/ --config .kube-linter.yaml` locally |
 | `build-container` | Dockerfile build error | Check `Dockerfile` syntax; image is `ubi9/ubi-minimal` |
 | `sast-shell-check` | Shell script issue in built image | Fix shellcheck warnings in task scripts |
 | `sast-unicode-check` | Suspicious Unicode characters | Remove non-ASCII characters or use allowed ranges |
