@@ -51,10 +51,10 @@ for the full list).
 
 ### kube-linter
 
-Validates Kubernetes manifests in `config/` and `tasks/`.
+Validates Kubernetes manifests in `tasks/`.
 
 ```bash
-kube-linter lint config/ tasks/ --config .kube-linter.yaml
+kube-linter lint tasks/ --config .kube-linter.yaml
 ```
 
 Install from [stackrox/kube-linter releases](https://github.com/stackrox/kube-linter/releases),
@@ -82,7 +82,6 @@ Actively maintained:
 
 Deprecated (do not invest effort linting or testing):
 
-- `tasks/generate-odcs-compose/`
 - `tasks/provision-env-with-ephemeral-namespace/`
 
 ## Integration Tests (CI Only)
@@ -146,6 +145,6 @@ Before pushing a PR, run locally:
 ```bash
 pipenv sync --dev && pipenv run yamllint .
 gitlint --fail-without-commits --commits "origin/main..HEAD"
-kube-linter lint config/ tasks/ --config .kube-linter.yaml
+kube-linter lint tasks/ --config .kube-linter.yaml
 [ "$(wc -l < AGENTS.md)" -le 300 ] && echo "OK" || echo "AGENTS.md too long"
 ```

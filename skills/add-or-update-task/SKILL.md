@@ -18,8 +18,7 @@ Actively maintained tasks:
 - `rpms-signature-scan` (`tasks/rpms-signature-scan/0.2/`)
 - `build-helm-chart-oci-ta` (`tasks/build-helm-chart-oci-ta/0.4/`)
 
-Deprecated tasks (`generate-odcs-compose`, `provision-env-with-ephemeral-namespace`) are
-pending removal.
+The deprecated `provision-env-with-ephemeral-namespace` task is pending removal.
 
 Use the rpms pipelines as the default template for bundle build/push. For integration
 tests, rpms scans external fixture images; helm clones the repo and verifies chart

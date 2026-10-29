@@ -36,7 +36,7 @@ All three run in the `test-container-pull-request` Konflux pipeline:
 |--------|---------|--------|
 | yamllint | `pipenv run yamllint .` | `.yamllint` |
 | gitlint | `gitlint --fail-without-commits --commits "origin/main..HEAD"` | `.gitlint` |
-| kube-linter | `kube-linter lint config/ tasks/ --config .kube-linter.yaml` | `.kube-linter.yaml` |
+| kube-linter | `kube-linter lint tasks/ --config .kube-linter.yaml` | `.kube-linter.yaml` |
 
 Additionally, GitHub Actions checks `AGENTS.md` stays under 300 lines.
 
@@ -51,9 +51,8 @@ Additionally, GitHub Actions checks `AGENTS.md` stays under 300 lines.
 
 ## Task Changes
 
-Actively maintained: `rpms-signature-scan` and `build-helm-chart-oci-ta`. Deprecated
-tasks (`generate-odcs-compose`, `provision-env-with-ephemeral-namespace`) are pending
-removal.
+Actively maintained: `rpms-signature-scan` and `build-helm-chart-oci-ta`. The
+deprecated `provision-env-with-ephemeral-namespace` task is pending removal.
 
 ### Version bumping
 

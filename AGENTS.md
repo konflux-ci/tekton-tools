@@ -5,7 +5,7 @@
 Tekton tasks and pipelines used by Konflux.
 The repo contains
 reusable Tekton Task definitions, CI pipeline definitions that build and test
-those tasks, and supporting configuration for Kerberos-based compose generation.
+those tasks.
 
 ## Project Structure
 
@@ -14,8 +14,6 @@ those tasks, and supporting configuration for Kerberos-based compose generation.
 - `tasks/<name>/OWNERS` -- Per-task approver lists (Prow-style OWNERS files)
 - `.tekton/` -- Pipelines-as-Code PipelineRun definitions that run on PRs and
   pushes (Konflux CI). These build container images and run task-level tests.
-- `config/` -- Kubernetes manifests for supporting infrastructure (e.g. Kerberos
-  cache CronJob, ServiceAccount, Role, RoleBinding)
 - `repos.d/` -- Yum `.repo` files used during container builds
 - `.github/workflows/` -- GitHub Actions workflows (fullsend agent dispatch)
 
@@ -27,8 +25,6 @@ those tasks, and supporting configuration for Kerberos-based compose generation.
 - **build-helm-chart-oci-ta** (`tasks/build-helm-chart-oci-ta/0.4/`): Packages
   and pushes a Helm chart to an OCI registry. Uses `helm-chart-oci` from
   `quay.io/konflux-ci/tools`.
-- **generate-odcs-compose** (`tasks/generate-odcs-compose/`): **Deprecated**.
-  Generates ODCS composes for RPM repositories.
 - **provision-env-with-ephemeral-namespace** (`tasks/provision-env-with-ephemeral-namespace/`):
   **Deprecated**. Replaced by `eaas-provision-space`.
 
@@ -93,12 +89,6 @@ bash -n tasks/rpms-signature-scan/0.2/migrations/0.2.1.sh
 4. Add an `OWNERS` file listing approvers for the task
 5. Add a `.tekton/<name>-pull-request.yaml` PipelineRun to test the task on PRs
 6. Add a `.tekton/<name>-push.yaml` PipelineRun for post-merge builds
-
-## Kerberos Configuration
-
-The generate-odcs-compose task requires Kerberos authentication. The setup
-involves a keytab secret and a CronJob (`config/cache-cronjob.yaml`) that
-refreshes the Kerberos cache every 8 hours. See `README.md` for details.
 
 ## AI Skills
 
