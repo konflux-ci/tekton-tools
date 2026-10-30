@@ -198,7 +198,7 @@ spec:
         - name: workspace
         steps:
         - name: yaml-lint
-          image: registry.access.redhat.com/ubi9/python-39:latest@sha256:72e8ed5f454c640a2509bb9ee696bedb54b5cf503eb913cdfa0b32ce0dfd5f6c
+          image: registry.access.redhat.com/ubi9/python-39:latest@sha256:4a188d479ea30c6211f9cee1e16d33c6dfc8a65708184a78e1fe2623ed7b5f07
           workingDir: $(workspaces.workspace.path)/source
           script: |
             python3 -m pip install pipenv
@@ -221,7 +221,7 @@ spec:
           env:
           - name: WORKSPACE_BASIC_AUTH_DIRECTORY_PATH
             value: $(workspaces.basic-auth.path)
-          image: registry.access.redhat.com/ubi9/python-39:latest@sha256:72e8ed5f454c640a2509bb9ee696bedb54b5cf503eb913cdfa0b32ce0dfd5f6c
+          image: registry.access.redhat.com/ubi9/python-39:latest@sha256:4a188d479ea30c6211f9cee1e16d33c6dfc8a65708184a78e1fe2623ed7b5f07
           workingDir: $(workspaces.workspace.path)/source
           script: |
             #!/bin/bash -ex
